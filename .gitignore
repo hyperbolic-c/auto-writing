@@ -1,0 +1,23 @@
+# Existing git repositories (managed separately)
+claude-plugins-official/
+claude-scientific-skills/
+superpowers/
+zotero-mcp/
+
+# Build artifacts
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Local settings
+*.local.json
