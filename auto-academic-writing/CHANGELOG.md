@@ -1,5 +1,52 @@
 # Changelog
 
+## v2.2.2 (2026-01-24)
+
+### Features
+
+- **academic-write command**: Integrated superpowers workflow for academic writing
+  - **brainstorming**: Explore requirements, propose 2-3 writing approaches, validate design section-by-section
+  - **writing-plans**: Generate detailed TODO list with acceptance criteria
+  - **executing-plans**: Execute chapter-by-chapter with review checkpoints
+- **Enhanced workflow**: Chapter review checkpoints, content coverage checks, citation matching verification
+
+### Changes
+
+- **academic-write.md**: Complete rewrite with integrated superpowers workflow
+  - Step 0: Superpowers integration
+  - Step 1: Read requirements file
+  - Step 2: Brainstorming (understanding, approach exploration, design validation)
+  - Step 3: Generate writing plan
+  - Step 4: Execute plan (reference-manager → fulltext fetch → paper-writer → review)
+  - Step 5: Compile and output
+
+### Breaking Changes
+
+- New workflow: Questions before writing, not after
+- Chapter-by-chapter review checkpoints
+
+---
+
+## v2.2.1 (2026-01-24)
+
+### Features
+
+- **paper-writer**: Restored full scientific writing capabilities
+  - IMRAD structure with Chinese paper support (摘要/关键词/第X章)
+  - Citation styles: APA/AMA/Vancouver/IEEE/Chicago
+  - Reporting guidelines: CONSORT/STROBE/PRISMA/STARD/TRIPOD/ARRIVE/CARE/SPIRIT
+  - Figures/tables guidelines and best practices
+  - Field-specific terminology (biomedical, molecular biology, chemistry, physics)
+  - Journal-specific formatting support
+  - Two-stage writing process detailed
+  - Error handling for missing fulltext
+
+### Documentation
+
+- Added `CHANGELOG.md` for version tracking
+
+---
+
 ## v2.2.0 (2026-01-24)
 
 ### New Features
