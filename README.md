@@ -16,7 +16,7 @@ auto-writing/
 ├── .claude-plugin/
 │   └── marketplace.json          # Auto-writing plugin marketplace
 ├── auto-academic-writing/        # Academic writing plugin
-│   ├── commands/                 # /academic-write, /academic-writing setup
+│   ├── commands/                 # /academic-write, /academic-writing-setup
 │   ├── skills/                   # Built-in skills (brainstorming, paper-writer, etc.)
 │   ├── agents/                   # academic-writer agent
 │   ├── scripts/                  # Configuration utilities
@@ -37,7 +37,7 @@ Self-contained academic writing assistant with Zotero integration.
 
 **Commands:**
 - `/academic-write <path>` - Start academic writing workflow
-- `/academic-writing setup` - Configure MCP Provider
+- `/academic-writing-setup` - Configure MCP Provider
 
 **Install:**
 ```bash

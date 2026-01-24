@@ -46,7 +46,7 @@
 首次安装后，需要配置学术写作插件使用哪个 MCP Provider 获取 PDF 内容：
 
 ```bash
-/academic-writing setup
+/academic-writing-setup
 ```
 
 此命令会交互式地让你选择：
