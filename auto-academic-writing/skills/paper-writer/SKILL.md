@@ -1,19 +1,113 @@
 ---
 name: paper-writer
-description: Generate academic paper content based on requirements, outline, and reference materials
+description: "Generate academic paper content in full paragraphs with IMRAD structure, citations, and professional formatting. Two-stage process: outline then prose."
+allowed-tools: [Read, Write, Edit, Bash]
 ---
 
 # Paper Writer
 
 ## Overview
 
-Generate academic paper content by combining requirements, outline, and parsed reference materials. Uses scientific-writing skills for quality output.
+**Core academic writing skill** for generating publication-quality scientific manuscripts. Combines requirements, outline, and reference materials into complete, well-structured academic papers.
+
+**Critical Principle: Always write in full paragraphs with flowing prose. Never submit bullet points in scientific papers.** Use a two-stage process: first create section outlines with key points, then convert those outlines into complete paragraphs.
 
 ## When to Use
 
 - Requirements parsed and confirmed
 - References retrieved and parsed
 - Ready to generate paper content
+- Need publication-quality academic writing
+
+## Writing Principles
+
+### 1. Two-Stage Writing Process
+
+**Stage 1: Create Section Outlines with Key Points**
+
+When starting a new section:
+1. Review the provided outline with key points
+2. Organize the main arguments or findings to present
+3. Identify key studies to cite
+4. Plan logical flow and organization
+
+**Stage 2: Convert Key Points to Full Paragraphs**
+
+Once the outline is complete, expand each point into proper prose:
+
+1. **Transform bullet points into complete sentences** with subjects, verbs, and objects
+2. **Add transitions** between sentences and ideas (however, moreover, in contrast)
+3. **Integrate citations naturally** within sentences
+4. **Ensure logical flow** from one sentence to the next
+5. **Vary sentence structure** to maintain reader engagement
+
+### 2. Core Writing Principles
+
+**Clarity**:
+- Use precise, unambiguous language
+- Define technical terms and abbreviations at first use
+- Maintain logical flow within and between paragraphs
+
+**Conciseness**:
+- Eliminate redundant words and phrases
+- Favor shorter sentences (15-20 words average)
+- Respect word limits strictly
+
+**Accuracy**:
+- Report exact values with appropriate precision
+- Use consistent terminology throughout
+- Distinguish between observations and interpretations
+
+**Objectivity**:
+- Present results without bias
+- Avoid overstating findings or implications
+- Maintain professional, neutral tone
+
+### 3. Manuscript Structure (IMRAD)
+
+**Standard Sections:**
+- **Introduction**: Establish research context, identify gaps, state objectives
+- **Related Work**: Review relevant literature systematically
+- **Methods**: Detail study design, populations, procedures, and analysis
+- **Results**: Present findings objectively without interpretation
+- **Discussion**: Interpret results, acknowledge limitations, propose future directions
+- **Conclusion**: Summarize key contributions and implications
+
+**Alternative Structures:**
+- Review articles (narrative, systematic, scoping)
+- Case reports and case series
+- Theoretical/modeling papers
+
+### 4. Citation Management
+
+**Major Citation Styles:**
+- **APA**: Author-date in-text citations (Author, Year)
+- **AMA**: Numbered superscript citations
+- **Vancouver**: Numbered citations in square brackets [1]
+- **IEEE**: Numbered square brackets [1]
+- **Chicago**: Notes-bibliography or author-date
+
+**Best Practices:**
+- Cite primary sources when possible
+- Include recent literature (last 5-10 years)
+- Balance citation distribution across sections
+- Integrate citations naturally within sentences
+
+### 5. Field-Specific Terminology
+
+**Biomedical and Clinical Sciences:**
+- Use precise anatomical and clinical terminology
+- Use "patients" for clinical studies, "participants" for community-based research
+- Report lab values with standard SI units
+
+**Molecular Biology and Genetics:**
+- Use italics for gene symbols (e.g., *TP53*), regular font for proteins (e.g., p53)
+- Follow species-specific gene nomenclature
+
+**General Principles:**
+- Match terminology to audience expertise
+- Define abbreviations at first use: "messenger RNA (mRNA)"
+- Maintain consistency throughout
 
 ## Input Format
 
@@ -24,16 +118,24 @@ Generate academic paper content by combining requirements, outline, and parsed r
     "topic": "Research topic",
     "length": 3000,
     "style": "academic",
+    "citation_style": "APA",
     "background": "Optional background text",
     "outline_hints": "Optional outline hints"
   },
   "outline": {
-    "sections": ["Introduction", "Method", "Results", "Discussion"]
+    "sections": [
+      {
+        "title": "Introduction",
+        "key_points": ["Point 1", "Point 2", "Point 3"],
+        "content_hints": "Optional guidance"
+      }
+    ]
   },
   "references": [
     {
       "title": "Reference Title",
       "authors": ["Author 1", "Author 2"],
+      "year": 2023,
       "content": "Parsed markdown content",
       "key": "ZoteroKey"
     }
@@ -44,18 +146,11 @@ Generate academic paper content by combining requirements, outline, and parsed r
 
 ## Writing Process
 
-1. **Analyze requirements** - Understand topic, style, length
-2. **Review references** - Extract key points, citations
-3. **Structure content** - Organize based on outline
-4. **Generate sections** - Write each section with proper citations
-5. **Review and polish** - Check consistency, flow, length
-
-## Citation Handling
-
-- **Inline citations:** Use (Author, Year) format
-- **Reference list:** Generate from reference materials
-- **Direct quotes:** Cite with page numbers if available
-- **Paraphrasing:** Cite without page numbers
+1. **Analyze requirements** - Understand topic, style, length, citation format
+2. **Review references** - Extract key points, citations, methodology
+3. **Structure content** - Organize based on outline sections
+4. **Generate sections** - Write each section using two-stage process
+5. **Review and polish** - Check consistency, flow, length, citations
 
 ## Output Format
 
@@ -63,40 +158,39 @@ Generate academic paper content by combining requirements, outline, and parsed r
 # {title}
 
 ## Abstract
-{auto-generated abstract}
+{concise 100-250 word summary covering purpose, methods, results, conclusions}
 
 ## 1. Introduction
-{content}
+{full prose content with citations}
 
 ## 2. Related Work
-{content with citations}
+{full prose content with citations}
 
-## 3. Method
-{content}
+## 3. Methods
+{full prose content with procedural details}
 
-## 4. Experiments/Results
-{content}
+## 4. Results
+{full prose content with data presentation and statistics}
 
 ## 5. Discussion
-{content}
+{full prose content with interpretation, limitations, future directions}
 
 ## 6. Conclusion
-{content}
+{full prose content summarizing contributions}
 
 ---
 
 ## References
 
-1. {Reference 1}
-2. {Reference 2}
+1. {Reference 1 with full citation}
+2. {Reference 2 with full citation}
 ...
 ```
 
 ## Integration
 
 ### Uses Sub-Skills
-
-- `@scientific-skills:scientific-writing` - Core writing capability
+- None (standalone writing capability)
 
 ### Output Structure
 
@@ -109,11 +203,31 @@ class PaperOutput:
     output_path: str      # File path
 ```
 
+## Workflow
+
+**Stage 1: Planning**
+1. Review requirement and outline
+2. Identify target structure (IMRAD or alternative)
+3. Plan section sequence
+
+**Stage 2: Drafting** (Use two-stage process for each section)
+1. Create outline with key points for each section
+2. Convert outline to full paragraphs with flowing prose
+3. Write Methods first (often easiest)
+4. Draft Results, Discussion, Introduction in order
+5. Craft Abstract last
+
+**Stage 3: Revision**
+1. Check logical flow and "red thread" throughout
+2. Verify consistency in terminology
+3. Ensure proper citation formatting
+4. Proofread for grammar and clarity
+
 ## Error Handling
 
-- **Insufficient references:** Warn and proceed
-- **Length constraint violated:** Adjust content
-- **Citation format error:** Use fallback format
+- **Insufficient references:** Warn and proceed with available sources
+- **Length constraint violated:** Adjust content to match target length
+- **Citation format error:** Use fallback format (APA by default)
 - **Writing blocked:** Return error with suggestions
 
 ## Example
@@ -123,9 +237,10 @@ Input:
 {
   "requirement": {
     "title": "Deep Learning for Image Classification",
-    "topic": "CNN architectures for image recognition",
+    "topic": "CNN architectures for medical diagnosis",
     "length": 2000,
-    "style": "academic"
+    "style": "academic",
+    "citation_style": "APA"
   },
   "references": [...]
 }
@@ -134,12 +249,26 @@ Output:
 # Deep Learning for Image Classification
 
 ## Abstract
-Deep learning has revolutionized image classification...
+Deep learning approaches have gained significant traction in medical imaging...
 
 ## 1. Introduction
-Image classification is a fundamental task...
+Image classification is a fundamental task in computer vision...
+
+## 2. Related Work
+Convolutional neural networks have evolved significantly...
+
+## 3. Methods
+We employed a novel architecture combining...
+
+## 4. Results
+Our model achieved 98.5% accuracy on the test set...
+
+## 5. Discussion
+These results suggest that deep learning can effectively...
+
+## 6. Conclusion
+In this study, we demonstrated the effectiveness of...
 
 ## References
-1. Krizhevsky, A., et al. (2012). ImageNet Classification...
-2. Simonyan, K., & Zisserman, A. (2014). Very Deep Convolutional...
+[Formatted references]
 ```

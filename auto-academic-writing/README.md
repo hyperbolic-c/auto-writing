@@ -1,38 +1,35 @@
 # Academic Writing Plugin
 
-学术写作助手：集成 Zotero 文献检索、MinerU 解析、scientific-skills 写作
+学术写作助手：集成 Zotero 文献检索和内置写作能力
 
-一个基于 Claude Code 的学术写作插件，自动完成从需求解析、文献检索到论文生成的全流程。
+一个自包含的 Claude Code 学术写作插件，自动完成从需求解析、文献检索到论文生成的全流程。
 
 ## 功能特性
 
 | 功能 | 描述 |
 |------|------|
 | **需求解析** | 解析 YAML 格式的需求文件，提取标题、主题、字数、风格、参考文献等 |
+| **大纲生成** | 基于研究主题生成结构化的论文大纲 |
 | **文献检索** | 三阶段检索：精确匹配 + 语义检索 + 扩展检索 |
 | **全文获取** | 自动下载 Zotero 中的 PDF 附件并转换为 Markdown |
-| **学术写作** | 基于参考文献生成结构化的学术论文 |
+| **学术写作** | 基于参考文献生成 IMRAD 结构的学术论文 |
 
 ## 安装
 
 ### 前置依赖
 
-安装本插件前，请确保已安装以下依赖：
+安装本插件前，请确保已安装 Zotero MCP：
 
 ```bash
 # 安装 zotero-mcp
 /plugin marketplace add hyperbolic-c/zotero-mcp
-
-# 安装 scientific-skills
-/plugin marketplace add K-Dense-AI/claude-scientific-skills
-
-# 安装 superpowers
-/plugin marketplace add obra/superpowers
 ```
+
+**注意:** v2.0.0 已内置写作技能，无需安装 scientific-skills 或 superpowers。
 
 ### 安装本插件
 
-通过 auto-writing 插件市场安装（推荐）：
+通过插件市场安装（推荐）：
 
 ```bash
 /plugin marketplace add hyperbolic-c/auto-writing
@@ -113,6 +110,8 @@ expand_from_references: true # 可选：是否扩展检索，默认 true
        ↓
 需求解析 → 提取: title, topic, length, style, references
        ↓
+内置 brainstorming → 生成论文大纲
+       ↓
 文献检索阶段:
 ├── 精确匹配 reference_titles
 ├── 语义检索 topic
@@ -120,7 +119,7 @@ expand_from_references: true # 可选：是否扩展检索，默认 true
        ↓
 获取全文 → PDF 下载 → Markdown 转换
        ↓
-scientific-skills → 生成论文
+内置 paper-writer → 生成论文
        ↓
 输出: output.md
 ```
@@ -140,7 +139,8 @@ auto-academic-writing/
 │   ├── requirement-parser/      # 需求解析技能
 │   ├── reference-manager/       # 参考文献管理技能
 │   ├── academic-writing-workflow/  # 主工作流技能
-│   └── paper-writer/            # 学术写作技能
+│   ├── brainstorming/           # 内置大纲生成技能
+│   └── paper-writer/            # 内置学术写作技能
 ├── scripts/
 │   └── config.py                # 配置脚本
 ├── examples/
@@ -152,35 +152,19 @@ auto-academic-writing/
 └── README.md                    # 本文件
 ```
 
-## 示例
+## 内置技能
 
-### 示例需求文件
+### brainstorming
 
-参考 `examples/sample-requirements.md`：
+基于研究主题生成结构化的论文大纲。采用两阶段流程：理解需求 → 生成大纲。
 
-```markdown
----
-title: "Deep Learning for Image Classification"
-topic: "CNN architectures for image recognition with deep neural networks"
-length: 2000
-style: "academic"
-references:
-  - "ImageNet Classification with Deep Convolutional Neural Networks"
-  - "Very Deep Convolutional Networks for Large-Scale Image Recognition"
-additional_references: 5
-expand_from_references: true
----
+### paper-writer
 
-# 研究背景
-Deep learning has revolutionized computer vision...
-
-# 大纲要点
-1. Introduction
-2. Related Work
-3. Methodology
-4. Experiments
-5. Conclusion
-```
+核心学术写作技能，生成 IMRAD 结构的论文：
+- **Two-Stage 写作**: 大纲 → 完整段落
+- **IMRAD 结构**: Introduction, Related Work, Methods, Results, Discussion, Conclusion
+- **引文格式**: APA, AMA, Vancouver, IEEE, Chicago
+- **写作原则**: 清晰、简洁、准确、客观
 
 ## 依赖项
 
@@ -200,12 +184,11 @@ Deep learning has revolutionized computer vision...
 | 标签扩展检索 | ✅ | ⚠️ 有限支持 |
 | 全文注释提取 | ✅ | ❌ |
 
-### 其他依赖
+### 可选依赖
 
-| 依赖 | 用途 | 仓库 |
+| 依赖 | 用途 | 说明 |
 |------|------|------|
-| claude-scientific-skills | scientific-writing 技能 | [K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills) |
-| superpowers | 工作流框架 | [obra/superpowers](https://github.com/obra/superpowers) |
+| MinerU | PDF 解析质量提升 | 需要 API token，用于提升 PDF 转换质量 |
 
 ## 常见问题
 
@@ -224,6 +207,15 @@ A: 使用 `additional_references` 字段设置额外检索数量。
 ### Q: MinerU 不是必须的吗？
 
 A: MinerU 是可选的。插件使用 Zotero MCP 内置的 PDF 转换功能，MinerU 可用于提升解析质量。
+
+## 更新日志
+
+### v2.0.0
+
+- **BREAKING**: 移除对 scientific-skills 和 superpowers 的依赖
+- 新增内置 brainstorming 技能
+- 合并 scientific-writing 到 paper-writer
+- 插件现在自包含所有写作能力
 
 ## 许可证
 

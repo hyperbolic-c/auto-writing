@@ -1,22 +1,14 @@
 # Academic Writing Plugin 设计方案
 
-> **For Claude:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` to implement this plan task-by-task.
+> **For Claude:** REQUIRED SUB-SKILL: Use `academic-writing-workflow` to implement this plugin.
 >
-> **使用指南:** 此插件需要配合以下工具使用:
-> - zotero-mcp: 文献检索和 PDF 获取
-> - claude-scientific-skills: scientific-writing 技能
-> - superpowers: 工作流框架（brainstorming, writing-plans 等）
+> **使用指南:** 此插件自包含所有必要技能，安装后直接使用:
+> - zotero-mcp: 文献检索和 PDF 获取（通过 MCP tools）
+> - 内置 brainstorming 技能：生成写作大纲
+> - 内置 scientific-writing 技能：生成论文草稿
 
 **Goal:** 创建一个 Claude Code 学术写作插件，集成 Zotero 文献管理、MinerU PDF 解析、scientific-skills 写作能力。
 
-**Architecture:** 基于 superpowers 工作流框架，创建学术写作专用的技能和命令。用户通过需求文件启动写作流程，插件自动完成文献检索、解析、写作全流程。
-
-**Tech Stack:**
-- Claude Code Plugin System
-- superpowers 技能框架
-- zotero-mcp (MCP server)
-- MinerU API (PDF 解析)
-- scientific-skills (写作技能)
 
 ---
 
@@ -26,22 +18,31 @@
 
 **插件名称:** `academic-writing`
 
-**核心定位:** 基于 superpowers 工作流框架的学术写作插件
+**核心定位:** 自包含的学术写作插件
 
 **设计原则:**
-- 以 superpowers 为框架，复用其 planning、tool-calling 能力
 - 创建专门的学术写作技能（skills）和代理（agents）
 - 用户通过对话提供需求文件路径，插件自动执行完整写作流程
-- 插件内嵌引用 superpowers 的技能作为子技能使用
+- 插件内嵌 brainstorming 和 scientific-writing 技能
 
 ### 1.2 与现有组件的关系
 
 | 组件 | 关系 |
 |------|------|
-| superpowers | 引用作为子技能框架 |
 | zotero-mcp | 通过 MCP tools 调用文献检索 |
-| claude-scientific-skills | 引用 scientific-writing 技能 |
 | MinerU | 通过 API 调用 PDF 解析 |
+
+### 1.3 技能目录结构
+
+```
+skills/
+├── academic-writing-workflow/   # 主工作流技能
+├── requirement-parser/          # 需求解析技能
+├── reference-manager/           # 参考文献管理技能
+├── paper-writer/                # 学术写作技能
+├── brainstorming/               # 内置大纲生成技能
+└── scientific-writing/          # 内置写作技能
+```
 
 ---
 
@@ -54,7 +55,7 @@
        ↓
 需求解析技能 → 提取: title, topic, length, style, reference_titles
        ↓
-superpowers:brainstorming → 生成写作大纲
+brainstorming 技能 → 生成写作大纲
        ↓
 文献检索阶段:
 ├── zotero_semantic_search(topic) → 基于 topic 语义检索
@@ -67,7 +68,7 @@ MinerU API (可选) → 精调 PDF 解析质量
        ↓
 读取解析后的文献 → 作为上下文
        ↓
-scientific-skills:scientific-writing → 生成论文草稿
+scientific-writing 技能 → 生成论文草稿
        ↓
 输出: output.md
 ```
@@ -265,7 +266,7 @@ academic-writing/
 ```
 1. 接收用户提供的需求文件路径
 2. 调用 requirement-parser 解析需求
-3. 使用 superpowers:brainstorming 生成大纲
+3. 使用 brainstorming 技能生成大纲
 4. 调用 reference-manager 检索和解析文献
 5. 调用 paper-writer 生成论文
 6. 返回输出文件路径
@@ -318,7 +319,7 @@ academic-writing/
 
 #### 5.3.4 paper-writer (学术写作技能)
 
-**依赖:** scientific-skills 中的 `scientific-writing`
+**依赖:** 内置 `scientific-writing` 技能
 
 **功能:**
 - 基于需求和大纲生成论文
@@ -440,8 +441,6 @@ Transformers have revolutionized NLP...
 | 依赖 | 用途 | 安装方式 |
 |------|------|----------|
 | zotero-mcp | 文献检索和 PDF 获取 | MCP server |
-| claude-scientific-skills | scientific-writing 技能 | 插件市场 |
-| superpowers | 工作流框架 | 插件市场 |
 
 ### 7.2 可选依赖
 
@@ -451,15 +450,3 @@ Transformers have revolutionized NLP...
 
 ---
 
-## 8. 后续任务
-
-实施计划详见各任务文档。核心任务包括：
-
-1. 创建插件目录结构和基础文件
-2. 实现 requirement-parser 技能
-3. 实现 reference-manager 技能（集成 zotero-mcp）
-4. 实现 academic-writing-workflow 技能
-5. 实现 paper-writer 技能（集成 scientific-skills）
-6. 创建 academic-write 命令
-7. 创建 academic-writer 代理
-8. 编写 README 和测试用例
