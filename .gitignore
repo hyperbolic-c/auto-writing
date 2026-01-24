@@ -3,6 +3,7 @@ claude-plugins-official/
 claude-scientific-skills/
 superpowers/
 zotero-mcp/
+cookjohn-zotero-mcp/
 
 # Build artifacts
 *.pyc
