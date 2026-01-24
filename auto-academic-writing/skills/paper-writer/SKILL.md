@@ -1,6 +1,6 @@
 ---
 name: paper-writer
-description: "Generate academic paper content in full paragraphs with IMRAD structure, citations, and professional formatting. Two-stage process: outline then prose."
+description: "Generate academic paper content section-by-section using semantic matching with reference paragraphs. Output full prose with citations and professional formatting."
 allowed-tools: [Read, Write, Edit, Bash]
 ---
 
@@ -8,77 +8,72 @@ allowed-tools: [Read, Write, Edit, Bash]
 
 ## Overview
 
-**Core academic writing skill** for generating publication-quality scientific manuscripts. Combines requirements, outline, and reference materials into complete, well-structured academic papers.
+**Section-by-section academic writing skill** that generates publication-quality content by matching section content points with relevant reference paragraphs through semantic similarity, then writing in fluent academic prose.
 
-**Critical Principle: Always write in full paragraphs with flowing prose. Never submit bullet points in scientific papers.** Use a two-stage process: first create section outlines with key points, then convert those outlines into complete paragraphs.
+**Critical Principle: Always write in full paragraphs with flowing prose. Never submit bullet points in scientific papers.**
 
 ## When to Use
 
-- Requirements parsed and confirmed
-- References retrieved and parsed
-- Ready to generate paper content
-- Need publication-quality academic writing
+- Requirements document parsed with references by section
+- Reference fulltext content available
+- Need to generate paper content section-by-section
+- Need semantic matching between content points and reference paragraphs
 
 ## Writing Principles
 
-### 1. Two-Stage Writing Process
+### 1. Section-by-Section Writing Process
 
-**Stage 1: Create Section Outlines with Key Points**
+**For each section in order:**
 
-When starting a new section:
-1. Review the provided outline with key points
-2. Organize the main arguments or findings to present
-3. Identify key studies to cite
-4. Plan logical flow and organization
+1. **Review section structure** - Title, subsections, content points
+2. **Review reference content** - Read fulltext paragraphs for each reference
+3. **Semantic matching** - Identify which reference paragraphs match each content point
+4. **Template selection** - Use **first reference as primary template** for structure
+5. **Write prose** - Expand content points using matched reference paragraphs as template
+6. **Add supporting citations** - Use semantic search results for additional support
 
-**Stage 2: Convert Key Points to Full Paragraphs**
+### 2. Semantic Matching Rules
 
-Once the outline is complete, expand each point into proper prose:
+**Matching Process:**
 
-1. **Transform bullet points into complete sentences** with subjects, verbs, and objects
-2. **Add transitions** between sentences and ideas (however, moreover, in contrast)
-3. **Integrate citations naturally** within sentences
-4. **Ensure logical flow** from one sentence to the next
-5. **Vary sentence structure** to maintain reader engagement
+| Step | Action |
+|------|--------|
+| 1 | Read content points under the section |
+| 2 | Read reference fulltext (split into paragraphs, ignore headings) |
+| 3 | For each content point, find semantically similar paragraphs |
+| 4 | Mark matched paragraphs as template source |
 
-### 2. Core Writing Principles
+**Key Insight:** Reference headings often don't contain topic information. Match by **paragraph content**, not section titles.
 
-**Clarity**:
+### 3. Template Selection Rules
+
+- **Primary template:** First listed reference for the section
+- **Secondary references:** All other listed references (used for comparison/supplement)
+- **Supplementary support:** Semantic search results for additional citations
+
+### 4. Core Writing Principles
+
+**Clarity:**
 - Use precise, unambiguous language
 - Define technical terms and abbreviations at first use
 - Maintain logical flow within and between paragraphs
 
-**Conciseness**:
+**Conciseness:**
 - Eliminate redundant words and phrases
 - Favor shorter sentences (15-20 words average)
 - Respect word limits strictly
 
-**Accuracy**:
+**Accuracy:**
 - Report exact values with appropriate precision
 - Use consistent terminology throughout
 - Distinguish between observations and interpretations
 
-**Objectivity**:
+**Objectivity:**
 - Present results without bias
 - Avoid overstating findings or implications
 - Maintain professional, neutral tone
 
-### 3. Manuscript Structure (IMRAD)
-
-**Standard Sections:**
-- **Introduction**: Establish research context, identify gaps, state objectives
-- **Related Work**: Review relevant literature systematically
-- **Methods**: Detail study design, populations, procedures, and analysis
-- **Results**: Present findings objectively without interpretation
-- **Discussion**: Interpret results, acknowledge limitations, propose future directions
-- **Conclusion**: Summarize key contributions and implications
-
-**Alternative Structures:**
-- Review articles (narrative, systematic, scoping)
-- Case reports and case series
-- Theoretical/modeling papers
-
-### 4. Citation Management
+### 5. Citation Management
 
 **Major Citation Styles:**
 - **APA**: Author-date in-text citations (Author, Year)
@@ -93,203 +88,217 @@ Once the outline is complete, expand each point into proper prose:
 - Balance citation distribution across sections
 - Integrate citations naturally within sentences
 
-### 5. Field-Specific Terminology
-
-**Biomedical and Clinical Sciences:**
-- Use precise anatomical and clinical terminology
-- Use "patients" for clinical studies, "participants" for community-based research
-- Report lab values with standard SI units
-
-**Molecular Biology and Genetics:**
-- Use italics for gene symbols (e.g., *TP53*), regular font for proteins (e.g., p53)
-- Follow species-specific gene nomenclature
-
-**General Principles:**
-- Match terminology to audience expertise
-- Define abbreviations at first use: "messenger RNA (mRNA)"
-- Maintain consistency throughout
-
 ## Input Format
 
 ```markdown
 {
-  "requirement": {
-    "title": "Paper Title",
-    "topic": "Research topic",
-    "length": 3000,
-    "style": "academic",
-    "citation_style": "APA",
-    "background": "Optional background text",
-    "outline_hints": "Optional outline hints"
-  },
-  "outline": {
-    "sections": [
-      {
-        "title": "Introduction",
-        "key_points": ["Point 1", "Point 2", "Point 3"],
-        "content_hints": "Optional guidance"
-      }
-    ]
-  },
-  "references": [
+  "paper_title": "Paper Title",
+  "sections": [
     {
-      "title": "Reference Title",
-      "authors": ["Author 1", "Author 2"],
-      "year": 2023,
-      "content": "Parsed markdown content",
-      "key": "ZoteroKey",
-      "fulltext_status": "required" | "optional" | "abstract",
-      "sections_cited": ["Methods"]
+      "title": "第1章 绪论",
+      "subsections": [
+        {
+          "title": "1.1 研究背景与意义",
+          "content_points": [
+            "日盲紫外探测在军事和民用领域的重要应用",
+            "现有技术的局限性"
+          ],
+          "references": [
+            {"title": "Reference Title 1", "key": "ZoteroKey1"},
+            {"title": "Reference Title 2", "key": "ZoteroKey2"}
+          ]
+        }
+      ]
     }
   ],
-  "output_path": "./output/paper.md"
+  "citation_style": "APA",
+  "supplementary_references": []  // Optional: semantic search results for additional citations
 }
 ```
 
-## Writing Process
+## Processing Steps
 
-1. **Analyze requirements** - Understand topic, style, length, citation format
-2. **Review references** - Extract key points, citations, methodology
-3. **Structure content** - Organize based on outline sections
-4. **Generate sections** - Write each section using two-stage process
-   - **For Methods/Results sections:** Check `fulltext_status=required` references
-     - If content lacks details → Call `zotero_get_item_fulltext` to get full paper
-   - **For Related Work section:** Check `fulltext_status=optional` references
-     - Evaluate if detailed comparison needed → Call `zotero_get_item_fulltext` if necessary
-   - **For other sections:** Use available abstract/metadata
-5. **Review and polish** - Check consistency, flow, length, citations
+1. **Process sections in order** - Start from first chapter to last
+2. **For each section:**
+   a. **Review content points** - Understand what needs to be written
+   b. **Fetch reference fulltexts** - Call `zotero_get_item_fulltext` for each reference key to get full content
+   c. **Parse and split fulltext** - Split into paragraphs, ignore headings
+   d. **Semantic match** - Match each content point to relevant paragraphs
+   e. **Select template** - Use first reference as primary template
+   f. **Write prose** - Convert content points to full paragraphs
+   g. **Add citations** - Reference [1], [2] based on matched sources
+3. **Compile output** - Combine all sections into complete paper
+
+## Semantic Matching Example
+
+**Input Section:**
+```markdown
+## 2.2 器件设计与制备
+
+**内容要点:**
+- p-MQWs-n结构的设计原理
+- AlGaN外延片的外延生长
+- 光刻与蒸镀电极工艺
+
+**参考文献:**
+- "High-performance AlGaN UV detector"
+- "MQWs structure design for UV photodetectors"
+```
+
+**Reference Fulltext Paragraphs:**
+```
+段落1: 我们设计了一种p-MQWs-n结构的AlGaN日盲紫外探测器。首先，通过金属有机化学气相沉积（MOCVD）技术在蓝宝石衬底上生长了多层量子阱结构的外延片。
+
+段落2: 外延片结构包括n型AlGaN层、多层量子阱有源区和p型AlGaN层。生长过程中需要严格控制温度、压强和源流量。
+
+段落3: 制备完成后，我们采用标准的光刻工艺定义电极图案，然后通过电子束蒸镀在器件表面沉积Cr/Au电极。
+```
+
+**Matching Result:**
+| Content Point | Matched Paragraph |
+|---------------|-------------------|
+| p-MQWs-n结构的设计原理 | 段落1, 段落2 |
+| AlGaN外延片的外延生长 | 段落1, 段落2 |
+| 光刻与蒸镀电极工艺 | 段落3 |
+
+**Output:**
+```markdown
+## 2.2 器件设计与制备
+
+本文设计了一种p-MQWs-n（p型层-多量子阱-n型层）结构的AlGaN日盲紫外探测器。该结构利用多量子阱有源区增强光电转换效率，同时通过p型和n型掺杂实现载流子的有效注入[1]。
+
+AlGaN外延片采用金属有机化学气相沉积（MOCVD）技术在蓝宝石衬底上生长[1]。外延片结构包括n型AlGaN层、多层量子阱有源区和p型AlGaN层。生长过程中需要严格控制温度、压强和源流量，以获得高质量的晶体结构和光电特性[1]。
+
+器件制备采用标准的光刻工艺定义电极图案，然后通过电子束蒸镀在器件表面沉积Cr/Au电极[2]。蒸镀完成后进行快速热退火处理以形成良好的欧姆接触[2]。
+```
 
 ## Output Format
 
 ```markdown
-# {title}
+# {paper_title}
 
-## Abstract
-{concise 100-250 word summary covering purpose, methods, results, conclusions}
+## 第1章 绪论
 
-## 1. Introduction
+### 1.1 研究背景与意义
+
 {full prose content with citations}
 
-## 2. Related Work
+### 1.2 国内外研究现状
+
 {full prose content with citations}
-
-## 3. Methods
-{full prose content with procedural details}
-
-## 4. Results
-{full prose content with data presentation and statistics}
-
-## 5. Discussion
-{full prose content with interpretation, limitations, future directions}
-
-## 6. Conclusion
-{full prose content summarizing contributions}
 
 ---
 
-## References
+## 第2章 器件研究
 
-1. {Reference 1 with full citation}
-2. {Reference 2 with full citation}
-...
+### 2.1 引言
+
+{full prose content with citations}
+
+### 2.2 器件设计与制备
+
+{full prose content with citations}
+
+---
+
+## 第3章 实验结果与讨论
+
+### 3.1 器件结构表征
+
+{full prose content with citations}
+
+---
+
+## Writing Notes
+
+**参考文献使用统计:**
+- Section 2.1: [1], [2]
+- Section 2.2: [1], [2]
+- Section 3.1: [1]
+
+**主要模板文献:**
+- Section 2.1: "High-performance AlGaN UV detector" [1]
+- Section 2.2: "High-performance AlGaN UV detector" [1]
 ```
 
 ## Integration
 
+### Workflow
+
+```
+reference-manager 输出
+    ↓
+paper-writer 输入
+    ↓
+遍历每个章节:
+    ├── 语义匹配内容要点与文献段落
+    ├── 以第一篇为主要模板仿写
+    └── 添加引用
+    ↓
+输出完整论文
+```
+
 ### Uses Sub-Skills
 - None (standalone writing capability)
 
-### Output Structure
-
-```python
-@dataclass
-class PaperOutput:
-    content: str          # Full paper markdown
-    word_count: int       # Actual word count
-    reference_count: int  # Number of references used
-    output_path: str      # File path
-```
-
-## Workflow
-
-**Stage 1: Planning**
-1. Review requirement and outline
-2. Identify target structure (IMRAD or alternative)
-3. Plan section sequence
-
-**Stage 2: Drafting** (Use two-stage process for each section)
-1. Create outline with key points for each section
-2. Convert outline to full paragraphs with flowing prose
-3. Write Methods first (often easiest)
-4. Draft Results, Discussion, Introduction in order
-5. Craft Abstract last
-
-**Stage 3: Revision**
-1. Check logical flow and "red thread" throughout
-2. Verify consistency in terminology
-3. Ensure proper citation formatting
-4. Proofread for grammar and clarity
-
-### Fulltext Trigger Rules
-
-When writing specific sections:
-
-| Section Type | Trigger Condition | Action |
-|--------------|-------------------|--------|
-| Methods | Need experimental parameters/details | Get fulltext for `required` references |
-| Results | Need specific data/figures | Get fulltext for `required` references |
-| Related Work | Need detailed comparison | Evaluate `optional` references, get fulltext if high relevance |
-| Introduction | General background | Use abstract only |
-| Discussion | Interpretation | Use abstract, fallback to fulltext if needed |
-
-**IMPORTANT:** For exact-matched references (user-provided), ALWAYS have fulltext available.
-
 ## Error Handling
 
-- **Insufficient references:** Warn and proceed with available sources
+- **No matching paragraphs found:** Use abstract/metadata, warn in output
+- **Insufficient references:** Proceed with available sources, suggest additional references
 - **Length constraint violated:** Adjust content to match target length
 - **Citation format error:** Use fallback format (APA by default)
 - **Writing blocked:** Return error with suggestions
 
 ## Example
 
+**Input:**
 ```markdown
-Input:
 {
-  "requirement": {
-    "title": "Deep Learning for Image Classification",
-    "topic": "CNN architectures for medical diagnosis",
-    "length": 2000,
-    "style": "academic",
-    "citation_style": "APA"
-  },
-  "references": [...]
+  "paper_title": "p-MQWs-n型AlGaN日盲紫外探测器研究",
+  "sections": [
+    {
+      "title": "第2章 器件研究",
+      "subsections": [
+        {
+          "title": "2.1 引言",
+          "content_points": [
+            "日盲紫外探测器的重要性",
+            "研究进展与存在的问题"
+          ],
+          "references": [
+            {
+              "title": "High-performance AlGaN UV detector",
+              "key": "ABC123",
+              "fulltext": "日盲紫外探测器（波长200-280 nm）在导弹尾焰探测、臭氧层监测等领域具有重要应用价值。相比于可见光和红外探测器，日盲紫外探测器具有背景噪声低、定位精度高、抗干扰能力强等优势。然而，传统日盲紫外探测器面临以下挑战：..."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "citation_style": "APA"
 }
+```
 
-Output:
-# Deep Learning for Image Classification
+**Output:**
+```
+# p-MQWs-n型AlGaN日盲紫外探测器研究
 
-## Abstract
-Deep learning approaches have gained significant traction in medical imaging...
+## 第2章 器件研究
 
-## 1. Introduction
-Image classification is a fundamental task in computer vision...
+### 2.1 引言
 
-## 2. Related Work
-Convolutional neural networks have evolved significantly...
+日盲紫外探测器（波长200-280 nm）在导弹尾焰探测、臭氧层监测等领域具有重要应用价值[1]。相比于可见光和红外探测器，日盲紫外探测器具有背景噪声低、定位精度高、抗干扰能力强等优势[1]。
 
-## 3. Methods
-We employed a novel architecture combining...
+然而，传统日盲紫外探测器面临以下挑战：...
 
-## 4. Results
-Our model achieved 98.5% accuracy on the test set...
+---
 
-## 5. Discussion
-These results suggest that deep learning can effectively...
+## Writing Notes
 
-## 6. Conclusion
-In this study, we demonstrated the effectiveness of...
+**参考文献使用统计:**
+- Section 2.1: [1]
 
-## References
-[Formatted references]
+**主要模板文献:**
+- Section 2.1: "High-performance AlGaN UV detector" [1]
 ```
