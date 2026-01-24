@@ -7,9 +7,7 @@ Automatic academic writing plugin for Claude Code.
 A monorepo for developing an **automatic academic writing plugin** that integrates:
 
 - **Zotero MCP** - Reference management and PDF retrieval
-- **MinerU** - PDF to Markdown conversion
-- **Scientific Skills** - Academic writing capabilities
-- **Superpowers** - Development workflow skills
+- **Built-in skills** - Academic writing and brainstorming capabilities
 
 ## Project Structure
 
@@ -19,23 +17,23 @@ auto-writing/
 │   └── marketplace.json          # Auto-writing plugin marketplace
 ├── auto-academic-writing/        # Academic writing plugin
 │   ├── commands/                 # /academic-write, /academic-writing setup
-│   ├── skills/                   # requirement-parser, reference-manager, etc.
+│   ├── skills/                   # Built-in skills (brainstorming, paper-writer, etc.)
 │   ├── agents/                   # academic-writer agent
 │   ├── scripts/                  # Configuration utilities
 │   └── README.md                 # Plugin documentation
-├── superpowers/                  # Core skills library
+├── superpowers/                  # Core skills library (for reference)
 ├── claude-plugins-official/      # Official Claude plugins
-├── claude-scientific-skills/     # Scientific research skills
+├── claude-scientific-skills/     # Scientific research skills (for reference)
 ├── zotero-mcp/                   # Zotero MCP server (Python)
 ├── cookjohn-zotero-mcp/          # Zotero MCP server (TypeScript/Zotero Plugin)
-└── MinerU.py                     # PDF to Markdown conversion
+└── MinerU.py                     # PDF to Markdown conversion (optional)
 ```
 
 ## Plugins
 
 ### Auto-Academic-Writing
 
-Academic writing assistant with Zotero integration.
+Self-contained academic writing assistant with Zotero integration.
 
 **Commands:**
 - `/academic-write <path>` - Start academic writing workflow
@@ -46,13 +44,8 @@ Academic writing assistant with Zotero integration.
 /plugin marketplace add hyperbolic-c/auto-writing
 ```
 
-## Workflow
-
-1. Use `/superpowers:brainstorm` to plan based on requirements
-2. Use zotero-mcp for reference search and retrieval
-3. Use MinerU API to parse references to markdown format
-4. Read references as context for writing
-5. Use `/scientific-skills` for academic writing
+**Requirements:**
+- zotero-mcp (Python or TypeScript) for reference search and PDF retrieval
 
 ## License
 
