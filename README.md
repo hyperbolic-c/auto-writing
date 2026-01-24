@@ -26,7 +26,9 @@ auto-writing/
 ├── superpowers/                  # Core skills library
 ├── claude-plugins-official/      # Official Claude plugins
 ├── claude-scientific-skills/     # Scientific research skills
-└── zotero-mcp/                   # Zotero MCP server
+├── zotero-mcp/                   # Zotero MCP server (Python)
+├── cookjohn-zotero-mcp/          # Zotero MCP server (TypeScript/Zotero Plugin)
+└── MinerU.py                     # PDF to Markdown conversion
 ```
 
 ## Plugins
