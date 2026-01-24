@@ -15,7 +15,7 @@
         "name": "User",
         "email": "user@example.com"
       },
-      "source": "./academic-writing",
+      "source": ".",
       "category": "writing",
       "homepage": "https://github.com/your-repo/auto-writing"
     }
