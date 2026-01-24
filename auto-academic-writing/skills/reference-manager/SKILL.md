@@ -14,7 +14,7 @@ Parse academic paper requirements document, extract references by section, and f
 - `zotero-mcp-plugin` (TypeScript/Zotero Plugin version) - see [cookjohn/zotero-mcp](https://github.com/cookjohn/zotero-mcp)
 
 **Configuration:**
-- Run `/academic-writing setup` to select your preferred MCP provider
+- Run `/academic-write-setup` to select your preferred MCP provider
 - Config stored in `~/.config/auto-writing/config.json`
 
 ## When to Use
@@ -190,7 +190,7 @@ Parse academic paper requirements document, extract references by section, and f
 - **Missing PDF attachment:** Report error for that specific reference, continue with others
 - **PDF conversion failed:** Report error, continue with abstract
 - **Network/API errors:** Report and suggest retry
-- **Configuration missing:** Prompt user to run `/academic-writing setup`
+- **Configuration missing:** Prompt user to run `/academic-write-setup`
 - **No references found in section:** Report section has no references
 
 ## Example

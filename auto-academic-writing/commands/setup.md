@@ -1,13 +1,13 @@
 ---
-name: academic-writing-setup
+name: academic-write-setup
 description: Configure academic-writing plugin MCP Provider
 ---
 
-# Academic Writing Setup Command
+# Academic Write Setup Command
 
 ## Usage
 
-`/academic-writing setup`
+`/academic-write-setup`
 
 ## Function
 
@@ -108,3 +108,7 @@ When executing this command, Claude should:
 - Config file location: `~/.config/auto-writing/config.json`
 - Can re-run this command to change configuration anytime
 - Check current provider: `cat ~/.config/auto-writing/config.json`
+
+## Related Commands
+
+- `/academic-write` - Execute academic writing workflow
