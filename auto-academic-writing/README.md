@@ -18,12 +18,12 @@
 
 ### 前置依赖
 
-安装本插件前，请确保已安装 Zotero MCP：
+安装本插件前，请确保已在 Claude Code 中安装 **Zotero MCP**（二选一）：
 
-```bash
-# 安装 zotero-mcp
-/plugin marketplace add hyperbolic-c/zotero-mcp
-```
+| 依赖 | 安装命令 | 说明 |
+|------|----------|------|
+| zotero-mcp (Python) | `/plugin marketplace add hyperbolic-c/zotero-mcp` | 功能完整，推荐使用 |
+| cookjohn-zotero-mcp | `/plugin marketplace add cookjohn/zotero-mcp` | Zotero 插件形式 |
 
 **注意:** v2.0.0 已内置写作技能，无需安装 scientific-skills 或 superpowers。
 
@@ -41,13 +41,22 @@
 /plugin local add ./auto-academic-writing
 ```
 
-### Zotero MCP 配置
+### 配置 MCP Provider
 
-确保 Zotero MCP 已正确配置并能访问你的 Zotero 库：
+首次安装后，需要配置学术写作插件使用哪个 MCP Provider 获取 PDF 内容：
 
 ```bash
-zotero-mcp setup
+/academic-writing setup
 ```
+
+此命令会交互式地让你选择：
+
+| 选项 | 说明 |
+|------|------|
+| [1] zotero-mcp | Python 实现，功能完整 |
+| [2] zotero-mcp-plugin | TypeScript/Zotero 插件形式 |
+
+选择后配置会保存到 `~/.config/auto-writing/config.json`。
 
 ## 使用方法
 
@@ -170,10 +179,12 @@ auto-academic-writing/
 
 ### Zotero MCP (二选一)
 
-| 依赖 | 用途 | 仓库 |
-|------|------|------|
-| zotero-mcp (Python) | 文献检索和 PDF 获取 | [hyperbolic-c/zotero-mcp](https://github.com/hyperbolic-c/zotero-mcp) |
-| cookjohn-zotero-mcp (TypeScript) | 文献检索（Zotero 插件集成） | [cookjohn/zotero-mcp](https://github.com/cookjohn/zotero-mcp) |
+| 依赖 | 安装命令 | 仓库 |
+|------|----------|------|
+| zotero-mcp (Python) | `/plugin marketplace add hyperbolic-c/zotero-mcp` | [hyperbolic-c/zotero-mcp](https://github.com/hyperbolic-c/zotero-mcp) |
+| cookjohn-zotero-mcp (TS) | `/plugin marketplace add cookjohn/zotero-mcp` | [cookjohn/zotero-mcp](https://github.com/cookjohn/zotero-mcp) |
+
+**配置:** 安装后运行 `/academic-writing setup` 选择使用的 Provider。 |
 
 **说明:** 插件会自动检测并适配两个版本的 Zotero MCP。
 
