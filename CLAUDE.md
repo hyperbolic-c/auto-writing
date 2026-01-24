@@ -20,7 +20,7 @@ This is a monorepo for developing an **automatic academic writing plugin** for C
 
 **Install local plugins:**
 ```bash
-/plugin local add ./local-plugins/academic-writing
+/plugin local add ./local-plugins
 ```
 
 **Or configure local marketplace:**
@@ -73,7 +73,15 @@ Process-oriented skills for development workflow:
 - `systematic-debugging/` - Debugging techniques
 - `writing-plans/` - Plan documentation
 
-### Academic Writing Plugin (`features/academic-writing/` or `local-plugins/academic-writing/`)
+### Academic Writing Plugin (`local-plugins/`)
+
+Plugin structure:
+- `commands/` - Command definitions
+- `skills/` - Skill definitions
+- `agents/` - Agent definitions
+- `scripts/` - Utility scripts
+- `docs/` - Design documentation
+- `examples/` - Example files
 
 **Commands:**
 - `/academic-write <path>` - Start academic writing workflow
