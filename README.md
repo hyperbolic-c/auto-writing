@@ -41,7 +41,11 @@ Self-contained academic writing assistant with Zotero integration.
 
 **Install:**
 ```bash
+# Register the marketplace
 /plugin marketplace add hyperbolic-c/auto-writing
+
+# Install the academic-writing plugin from this marketplace
+/plugin install academic-writing@hyperbolic-c/auto-writing
 ```
 
 **Requirements:**
