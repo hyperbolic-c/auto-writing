@@ -137,7 +137,9 @@ Once the outline is complete, expand each point into proper prose:
       "authors": ["Author 1", "Author 2"],
       "year": 2023,
       "content": "Parsed markdown content",
-      "key": "ZoteroKey"
+      "key": "ZoteroKey",
+      "fulltext_status": "required" | "optional" | "abstract",
+      "sections_cited": ["Methods"]
     }
   ],
   "output_path": "./output/paper.md"
@@ -150,6 +152,11 @@ Once the outline is complete, expand each point into proper prose:
 2. **Review references** - Extract key points, citations, methodology
 3. **Structure content** - Organize based on outline sections
 4. **Generate sections** - Write each section using two-stage process
+   - **For Methods/Results sections:** Check `fulltext_status=required` references
+     - If content lacks details → Call `zotero_get_item_fulltext` to get full paper
+   - **For Related Work section:** Check `fulltext_status=optional` references
+     - Evaluate if detailed comparison needed → Call `zotero_get_item_fulltext` if necessary
+   - **For other sections:** Use available abstract/metadata
 5. **Review and polish** - Check consistency, flow, length, citations
 
 ## Output Format
@@ -222,6 +229,20 @@ class PaperOutput:
 2. Verify consistency in terminology
 3. Ensure proper citation formatting
 4. Proofread for grammar and clarity
+
+### Fulltext Trigger Rules
+
+When writing specific sections:
+
+| Section Type | Trigger Condition | Action |
+|--------------|-------------------|--------|
+| Methods | Need experimental parameters/details | Get fulltext for `required` references |
+| Results | Need specific data/figures | Get fulltext for `required` references |
+| Related Work | Need detailed comparison | Evaluate `optional` references, get fulltext if high relevance |
+| Introduction | General background | Use abstract only |
+| Discussion | Interpretation | Use abstract, fallback to fulltext if needed |
+
+**IMPORTANT:** For exact-matched references (user-provided), ALWAYS have fulltext available.
 
 ## Error Handling
 
