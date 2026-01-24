@@ -48,13 +48,22 @@ Enter 1 or 2:
 
 ### Step 4: Save Configuration
 
-Execute terminal commands to save the selection:
+#### Step 4a: Generate Config Based on Input
+
+| User Input | Config Content |
+|------------|----------------|
+| 1 | `{"mcp_provider": "zotero-mcp"}` |
+| 2 | `{"mcp_provider": "zotero-mcp-plugin"}` |
+
+#### Step 4b: Execute Terminal Commands
+
+Generate and execute the following commands with the selected config:
 
 ```bash
 # Create config directory
 mkdir -p ~/.config/auto-writing
 
-# Write config (replace with your choice)
+# Write config (use config content from Step 4a)
 echo '{"mcp_provider": "zotero-mcp"}' > ~/.config/auto-writing/config.json
 
 # Verify
@@ -79,11 +88,19 @@ Current Configuration:
 
 When executing this command, Claude should:
 
-1. Display the welcome message and options
-2. Ask user for input (1 or 2)
-3. Validate input and retry if invalid
-4. Execute terminal commands to write config file
-5. Display confirmation message
+1. Display the welcome message and current configuration
+2. Show the options table with both providers
+3. Ask user for input (1 or 2)
+4. Validate input, prompt again if invalid
+5. Based on input:
+   - If "1": Set `config_content='{"mcp_provider": "zotero-mcp"}'`
+   - If "2": Set `config_content='{"mcp_provider": "zotero-mcp-plugin"}'`
+6. Execute terminal commands with the generated config:
+   ```bash
+   mkdir -p ~/.config/auto-writing
+   echo "$config_content" > ~/.config/auto-writing/config.json
+   ```
+7. Display confirmation message with selected provider
 
 ## Notes
 
