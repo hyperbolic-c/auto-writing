@@ -45,7 +45,8 @@ Self-contained academic writing assistant with Zotero integration.
 ```
 
 **Requirements:**
-- zotero-mcp (Python or TypeScript) for reference search and PDF retrieval
+- [zotero-mcp](/zotero-mcp/) (Python) - Reference management and PDF retrieval
+- [cookjohn-zotero-mcp](/cookjohn-zotero-mcp/) (TypeScript) - Zotero plugin alternative
 
 ## License
 
