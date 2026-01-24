@@ -21,7 +21,7 @@ Main workflow skill that orchestrates the complete academic writing process: par
    └── requirement-parser skill
 
 2. Generate Outline
-   └── superpowers:brainstorming (optional)
+   └── brainstorming skill (built-in)
    └── Create structured outline based on topic
 
 3. Search References
@@ -30,7 +30,7 @@ Main workflow skill that orchestrates the complete academic writing process: par
 
 4. Generate Paper
    └── paper-writer skill
-   └── scientific-skills:scientific-writing
+   └── Built-in academic writing capabilities
 
 5. Output Result
    └── Return output file path
@@ -70,11 +70,10 @@ Main workflow skill that orchestrates the complete academic writing process: par
 
 ### Requires Sub-Skills
 
-- `@superpowers:brainstorming` - For outline generation
+- `brainstorming` - For outline generation (built-in)
 - `requirement-parser` - For parsing requirements
 - `reference-manager` - For reference management
-- `paper-writer` - For paper generation
-- `@scientific-skills:scientific-writing` - For actual writing
+- `paper-writer` - For paper generation (includes writing capabilities)
 
 ### Output Format for Next Steps
 
