@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "auto-writing",
+  "description": "Automatic academic writing plugin for Claude Code: integrates Zotero reference management, MinerU PDF parsing, and scientific-skills for academic paper generation",
+  "owner": {
+    "name": "User",
+    "email": "user@example.com"
+  },
+  "plugins": [
+    {
+      "name": "academic-writing",
+      "description": "Academic writing assistant: integrate Zotero reference search, MinerU PDF parsing, and scientific-skills for writing",
+      "version": "1.0.0",
+      "author": {
+        "name": "User",
+        "email": "user@example.com"
+      },
+      "source": "./auto-academic-writing",
+      "category": "writing",
+      "homepage": "https://github.com/hyperbolic-c/auto-writing"
+    }
+  ]
+}

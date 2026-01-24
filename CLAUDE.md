@@ -10,18 +10,7 @@ This is a monorepo for developing an **automatic academic writing plugin** for C
 - **claude-plugins-official**: Official Claude plugins (code-simplifier, code-review, etc.)
 - **claude-scientific-skills**: 139 scientific skills for research and writing
 - **zotero-mcp**: MCP server for Zotero reference management
-- **local-plugins/**: Local plugin marketplace for custom plugins
-
-### Local Plugins
-
-| Plugin | Description |
-|--------|-------------|
-| `academic-writing` | Academic writing assistant with Zotero integration |
-
-**Install local plugins:**
-```bash
-/plugin local add ./local-plugins
-```
+- **auto-academic-writing/**: Academic writing plugin (auto-writing monorepo)
 
 **Or configure local marketplace:**
 Add `"allowedMarkets": ["local"]` to Claude Desktop config under `cli` section.
@@ -73,7 +62,7 @@ Process-oriented skills for development workflow:
 - `systematic-debugging/` - Debugging techniques
 - `writing-plans/` - Plan documentation
 
-### Academic Writing Plugin (`local-plugins/`)
+### Academic Writing Plugin (`auto-academic-writing/`)
 
 Plugin structure:
 - `commands/` - Command definitions

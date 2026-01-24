@@ -32,8 +32,16 @@
 
 ### 安装本插件
 
+通过 auto-writing 插件市场安装（推荐）：
+
 ```bash
-/plugin local add ./local-plugins
+/plugin marketplace add hyperbolic-c/auto-writing
+```
+
+或直接从源码安装：
+
+```bash
+/plugin local add ./auto-academic-writing
 ```
 
 ### Zotero MCP 配置
@@ -120,7 +128,7 @@ scientific-skills → 生成论文
 ## 文件结构
 
 ```
-local-plugins/  (即 academic-writing)
+auto-academic-writing/
 ├── .claude-plugin/
 │   └── plugin.json              # 插件清单
 ├── commands/
