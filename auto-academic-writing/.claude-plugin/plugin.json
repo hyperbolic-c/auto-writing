@@ -1,7 +1,7 @@
 {
   "name": "academic-writing",
   "description": "Academic writing assistant: integrate Zotero reference search, MinerU PDF parsing, and scientific-skills for writing",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "author": {
     "name": "User",
     "email": "user@example.com"
