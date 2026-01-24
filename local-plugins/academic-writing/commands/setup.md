@@ -48,24 +48,17 @@ Enter 1 or 2:
 
 ### Step 4: Save Configuration
 
-Run the configuration script to save the selection:
-
-```bash
-# For option 1 (zotero-mcp)
-./features/academic-writing/scripts/config.py --set zotero-mcp
-
-# For option 2 (zotero-mcp-plugin)
-./features/academic-writing/scripts/config.py --set zotero-mcp-plugin
-```
-
-Or directly write to config file:
+Execute terminal commands to save the selection:
 
 ```bash
 # Create config directory
 mkdir -p ~/.config/auto-writing
 
-# Write config
+# Write config (replace with your choice)
 echo '{"mcp_provider": "zotero-mcp"}' > ~/.config/auto-writing/config.json
+
+# Verify
+cat ~/.config/auto-writing/config.json
 ```
 
 ### Step 5: Display Result
@@ -89,7 +82,7 @@ When executing this command, Claude should:
 1. Display the welcome message and options
 2. Ask user for input (1 or 2)
 3. Validate input and retry if invalid
-4. Execute the config script or write config file directly
+4. Execute terminal commands to write config file
 5. Display confirmation message
 
 ## Notes
@@ -97,4 +90,4 @@ When executing this command, Claude should:
 - User needs to have the selected MCP Server configured in Claude Desktop
 - Config file location: `~/.config/auto-writing/config.json`
 - Can re-run this command to change configuration anytime
-- Use `./features/academic-writing/scripts/config.py --get` to check current provider
+- Check current provider: `cat ~/.config/auto-writing/config.json`
