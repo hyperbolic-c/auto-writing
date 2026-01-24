@@ -96,7 +96,8 @@ The skill uses the configured MCP provider:
   "topic": "Research topic description",
   "reference_titles": ["Title 1", "Title 2"],
   "additional_references": 5,
-  "expand_from_references": true
+  "expand_from_references": true,
+  "sections_for_fulltext": ["Methods", "Results"]
 }
 ```
 
@@ -107,8 +108,9 @@ The skill uses the configured MCP provider:
 3. **Exact match** each reference title
 4. **Semantic search** by topic if needed
 5. **Expand** from matched items (if tools available for selected provider)
-6. **Fetch fulltext** for matched items with PDF (using selected provider's tool)
-7. **Return** parsed content + metadata
+6. **Fetch fulltext** for exact-matched items (REQUIRED - ALWAYS call `zotero_get_item_fulltext` or `get_content`)
+7. **Fetch fulltext** for semantic-matched items by section priority (Methods/Results=required, Related Work=optional)
+8. **Return** parsed content + metadata with fulltext_status
 
 ## Output Format
 
@@ -116,17 +118,15 @@ The skill uses the configured MCP provider:
 **文献检索结果:**
 
 - **MCP Provider:** {zotero-mcp | zotero-mcp-plugin}
-- **精确匹配:** {n} 篇
-- **语义检索:** {m} 篇
-- **扩展检索:** {k} 篇
-- **解析成功:** {p} 篇
-- **跳过:** {s} 篇（无 PDF）
+- **精确匹配:** {n} 篇 (强制全文: {nf} 篇, 摘要: {na} 篇)
+- **语义检索:** {m} 篇 (强制全文: {mf} 篇, 可选全文: {mo} 篇, 摘要: {ms} 篇)
+- **扩展检索:** {k} 篇（摘要）
 
 ---
 
 **已解析文献:**
 
-### 1. {title1}
+### 1. {title} [强制全文]
 - **Key:** {key}
 - **Authors:** {authors}
 - **Date:** {date}
@@ -139,6 +139,25 @@ The skill uses the configured MCP provider:
 
 **全文内容:**
 {fulltext_markdown}
+
+### 2. {title} [可选全文]
+- **Key:** {key}
+- **Authors:** {authors}
+- **Date:** {date}
+- **相似度/来源:** {similarity_score}
+
+**内容摘要:**
+{abstract}
+（全文预载: {fulltext_preview}）
+
+### 3. {title} [摘要]
+- **Key:** {key}
+- **Authors:** {authors}
+- **Date:** {date}
+- **相似度/来源:** {similarity_score}
+
+**内容摘要:**
+{abstract}
 ```
 
 ## Error Handling
@@ -193,13 +212,13 @@ We propose a deep convolutional neural network architecture for image classifica
 
 ### zotero-mcp (Python Version)
 
-- ✅ Full PDF text extraction via `zotero_get_item_fulltext`
+- ✅ Full PDF text extraction via `zotero_get_item_fulltext` (REQUIRED for exact-matched items)
 - ✅ Tag-based expansion via `zotero_search_by_tag`
 - ✅ Rich metadata and annotations
 
 ### zotero-mcp-plugin (TypeScript Version)
 
-- ✅ Full PDF text extraction via `get_content`
+- ✅ Full PDF text extraction via `get_content` (REQUIRED for exact-matched items)
 - ⚠️ Limited tag-based expansion
 - ✅ Semantic search with embedding vectors
 - ✅ Streamable HTTP for real-time communication
