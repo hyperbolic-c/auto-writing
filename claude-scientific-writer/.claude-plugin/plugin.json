@@ -1,0 +1,13 @@
+{
+  "name": "claude-scientific-writer",
+  "description": "Academic writing assistant: integrate Zotero reference search, MinerU PDF parsing, and scientific-skills for writing",
+  "version": "3.0.0",
+  "author": {
+    "name": "User",
+    "email": "user@example.com"
+  },
+  "homepage": "https://github.com/hyperbolic-c/auto-writing",
+  "repository": "https://github.com/hyperbolic-c/auto-writing",
+  "license": "MIT",
+  "keywords": ["writing", "academic", "zotero", "research", "papers"]
+}

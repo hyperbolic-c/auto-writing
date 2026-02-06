@@ -18,6 +18,18 @@
       "source": "./auto-academic-writing",
       "category": "writing",
       "homepage": "https://github.com/hyperbolic-c/auto-writing"
+    },
+    {
+      "name": "claude-scientific-writer",
+      "description": "Collection of scientific writer skills",
+      "version": "3.0.0",
+      "author": {
+        "name": "User",
+        "email": "user@example.com"
+      },
+      "source": "./claude-scientific-writer",
+      "category": "writing",
+      "homepage": "https://github.com/hyperbolic-c/auto-writing"
     }
   ]
 }
