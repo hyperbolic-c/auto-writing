@@ -26,3 +26,7 @@ Thumbs.db
 # Logs
 logs/
 *.log
+
+*.env
+
+*uv.lock
