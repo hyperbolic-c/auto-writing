@@ -30,6 +30,19 @@
       "source": "./claude-scientific-writer",
       "category": "writing",
       "homepage": "https://github.com/hyperbolic-c/auto-writing"
+    },
+    {
+      "name": "humanizer",
+      "description": "A Claude Code skill that removes signs of AI-generated writing from text, making it sound more natural and human",
+      "version": "2.1.1",
+      "author": {
+        "name": "User",
+        "email": "user@example.com"
+      },
+      "source": "./humanizer",
+      "homepage": "https://github.com/blader/humanizer",
+      "repository": "https://github.com/blader/humanizer",
+      "license": "MIT"
     }
   ]
 }
