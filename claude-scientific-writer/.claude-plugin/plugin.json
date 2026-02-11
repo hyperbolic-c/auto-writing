@@ -1,7 +1,7 @@
 {
   "name": "claude-scientific-writer",
   "description": "Academic writing assistant: integrate Zotero reference search, MinerU PDF parsing, and scientific-skills for writing",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": {
     "name": "User",
     "email": "user@example.com"

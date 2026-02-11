@@ -22,7 +22,7 @@
     {
       "name": "claude-scientific-writer",
       "description": "Collection of scientific writer skills",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "author": {
         "name": "User",
         "email": "user@example.com"
