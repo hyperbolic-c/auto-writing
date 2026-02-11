@@ -1,27 +1,21 @@
 #!/usr/bin/env python3
 """
-/// script
-dependencies = ["requests>=2.31.0"]
-///
-
-AI-powered scientific schematic generation using Nano Banana Pro or MiniMax.
+AI-powered scientific schematic generation using Nano Banana Pro.
 
 This script uses a smart iterative refinement approach:
-1. Generate initial image with Nano Banana Pro or MiniMax
-2. AI quality review using Gemini 3 Pro for scientific critique (OpenRouter only)
+1. Generate initial image with Nano Banana Pro
+2. AI quality review using Gemini 3 Pro for scientific critique
 3. Only regenerate if quality is below threshold for document type
 4. Repeat until quality meets standards (max iterations)
 
 Requirements:
-    - OPENROUTER_API_KEY environment variable (Nano Banana Pro)
-    - MINIMAX_API_KEY environment variable (MiniMax)
+    - OPENROUTER_API_KEY environment variable
     - requests library
 
-Usage (Nano Banana Pro):
-    uv run --script scripts/generate_schematic_ai.py "Create a flowchart" -o flowchart.png
-
-Usage (MiniMax):
-    uv run --script scripts/generate_schematic_ai.py "Create a flowchart" -o flowchart.png --provider minimax
+Usage:
+    python generate_schematic_ai.py "Create a flowchart showing CONSORT participant flow" -o flowchart.png
+    python generate_schematic_ai.py "Neural network architecture diagram" -o architecture.png --iterations 2
+    python generate_schematic_ai.py "Simple block diagram" -o diagram.png --doc-type poster
 """
 
 import argparse
@@ -33,51 +27,11 @@ import time
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Tuple
 
-import requests
-
-
-# MiniMax API configuration
-MINIMAX_API_URL = "https://api.minimaxi.com/v1/image_generation"
-MINIMAX_DEFAULT_MODEL = "image-01"
-
-
-def _get_api_key(provider: str = "openrouter") -> Optional[str]:
-    """Get API key from environment or .env file."""
-    env_key = f"{provider.upper()}_API_KEY"
-    api_key = os.environ.get(env_key)
-    if api_key:
-        return api_key
-
-    # Check .env file
-    for path in [Path.cwd()] + list(Path.cwd().parents)[:5]:
-        env_file = path / ".env"
-        if env_file.exists():
-            with open(env_file, 'r') as f:
-                for line in f:
-                    if line.startswith(f'{env_key}='):
-                        value = line.split('=', 1)[1].strip().strip('"').strip("'")
-                        if value:
-                            return value
-    return None
-
-
-def _get_provider() -> str:
-    """Get image provider from environment or .env file."""
-    provider = os.environ.get("IMAGE_PROVIDER")
-    if provider:
-        return provider.lower()
-
-    for path in [Path.cwd()] + list(Path.cwd().parents)[:5]:
-        env_file = path / ".env"
-        if env_file.exists():
-            with open(env_file, 'r') as f:
-                for line in f:
-                    if line.startswith('IMAGE_PROVIDER='):
-                        value = line.split('=', 1)[1].strip().strip('"').strip("'")
-                        if value:
-                            return value.lower()
-    return "openrouter"
-
+try:
+    import requests
+except ImportError:
+    print("Error: requests library not found. Install with: pip install requests")
+    sys.exit(1)
 
 # Try to load .env file from multiple potential locations
 def _load_env_file():
@@ -189,51 +143,38 @@ IMPORTANT - NO FIGURE NUMBERS:
 - The diagram should contain only the visual content itself
 """
     
-    def __init__(self, api_key: Optional[str] = None, verbose: bool = False, provider: str = "openrouter"):
+    def __init__(self, api_key: Optional[str] = None, verbose: bool = False):
         """
         Initialize the generator.
-
+        
         Args:
-            api_key: API key for the selected provider
+            api_key: OpenRouter API key (or use OPENROUTER_API_KEY env var)
             verbose: Print detailed progress information
-            provider: Image provider ("openrouter" or "minimax")
         """
-        self.provider = provider.lower()
+        # Priority: 1) explicit api_key param, 2) environment variable, 3) .env file
+        self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+        
+        # If not found in environment, try loading from .env file
+        if not self.api_key:
+            _load_env_file()
+            self.api_key = os.getenv("OPENROUTER_API_KEY")
+        
+        if not self.api_key:
+            raise ValueError(
+                "OPENROUTER_API_KEY not found. Please either:\n"
+                "  1. Set the OPENROUTER_API_KEY environment variable\n"
+                "  2. Add OPENROUTER_API_KEY to your .env file\n"
+                "  3. Pass api_key parameter to the constructor\n"
+                "Get your API key from: https://openrouter.ai/keys"
+            )
+        
         self.verbose = verbose
-        self._last_error = None
+        self._last_error = None  # Track last error for better reporting
         self.base_url = "https://openrouter.ai/api/v1"
-
-        if self.provider == "minimax":
-            self.api_key = api_key or _get_api_key("minimax")
-            if not self.api_key:
-                raise ValueError(
-                    "MINIMAX_API_KEY not found. Please either:\n"
-                    "  1. Set the MINIMAX_API_KEY environment variable\n"
-                    "  2. Add MINIMAX_API_KEY to your .env file\n"
-                    "  3. Pass api_key parameter to the constructor\n"
-                    "Get your API key from: https://api.minimaxi.com"
-                )
-            self.image_model = MINIMAX_DEFAULT_MODEL
-        else:
-            self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
-
-            if not self.api_key:
-                _load_env_file()
-                self.api_key = os.getenv("OPENROUTER_API_KEY")
-
-            if not self.api_key:
-                raise ValueError(
-                    "OPENROUTER_API_KEY not found. Please either:\n"
-                    "  1. Set the OPENROUTER_API_KEY environment variable\n"
-                    "  2. Add OPENROUTER_API_KEY to your .env file\n"
-                    "  3. Pass api_key parameter to the constructor\n"
-                    "Get your API key from: https://openrouter.ai/keys"
-                )
-
-            # Nano Banana Pro for image generation
-            self.image_model = "google/gemini-3-pro-image-preview"
-
-        # Gemini 3 Pro for quality review (OpenRouter only)
+        # Nano Banana Pro - Google's advanced image generation model
+        # https://openrouter.ai/google/gemini-3-pro-image-preview
+        self.image_model = "google/gemini-3-pro-image-preview"
+        # Gemini 3 Pro for quality review - excellent vision and reasoning
         self.review_model = "google/gemini-3-pro"
         
     def _log(self, message: str):
@@ -406,37 +347,30 @@ IMPORTANT - NO FIGURE NUMBERS:
     
     def generate_image(self, prompt: str) -> Optional[bytes]:
         """
-        Generate an image using the configured provider.
-
+        Generate an image using Nano Banana Pro.
+        
         Args:
             prompt: Description of the diagram to generate
-
+            
         Returns:
             Image bytes or None if generation failed
         """
-        self._last_error = None
-
-        if self.provider == "minimax":
-            return self._generate_image_minimax(prompt)
-        else:
-            return self._generate_image_openrouter(prompt)
-
-    def _generate_image_openrouter(self, prompt: str) -> Optional[bytes]:
-        """Generate an image using OpenRouter API."""
+        self._last_error = None  # Reset error
+        
         messages = [
             {
                 "role": "user",
                 "content": prompt
             }
         ]
-
+        
         try:
             response = self._make_request(
                 model=self.image_model,
                 messages=messages,
                 modalities=["image", "text"]
             )
-
+            
             # Debug: print response structure if verbose
             if self.verbose:
                 self._log(f"Response keys: {response.keys()}")
@@ -445,6 +379,7 @@ IMPORTANT - NO FIGURE NUMBERS:
                 if "choices" in response and response["choices"]:
                     msg = response["choices"][0].get("message", {})
                     self._log(f"Message keys: {msg.keys()}")
+                    # Show content preview without printing huge base64 data
                     content = msg.get("content", "")
                     if isinstance(content, str):
                         preview = content[:200] + "..." if len(content) > 200 else content
@@ -454,7 +389,7 @@ IMPORTANT - NO FIGURE NUMBERS:
                         for i, item in enumerate(content[:3]):
                             if isinstance(item, dict):
                                 self._log(f"  Item {i}: type={item.get('type')}")
-
+            
             # Check for API errors in response
             if "error" in response:
                 error_msg = response["error"]
@@ -463,17 +398,18 @@ IMPORTANT - NO FIGURE NUMBERS:
                 self._last_error = f"API Error: {error_msg}"
                 print(f"✗ {self._last_error}")
                 return None
-
+            
             image_data = self._extract_image_from_response(response)
             if image_data:
                 self._log(f"✓ Generated image ({len(image_data)} bytes)")
             else:
                 self._last_error = "No image data in API response - model may not support image generation"
                 self._log(f"✗ {self._last_error}")
+                # Additional debug info when image extraction fails
                 if self.verbose and "choices" in response:
                     msg = response["choices"][0].get("message", {})
                     self._log(f"Full message structure: {json.dumps({k: type(v).__name__ for k, v in msg.items()})}")
-
+            
             return image_data
         except RuntimeError as e:
             self._last_error = str(e)
@@ -485,50 +421,6 @@ IMPORTANT - NO FIGURE NUMBERS:
             import traceback
             if self.verbose:
                 traceback.print_exc()
-            return None
-
-    def _generate_image_minimax(self, prompt: str, aspect_ratio: str = "16:9") -> Optional[bytes]:
-        """Generate an image using MiniMax API."""
-        api_key = _get_api_key("minimax")
-        if not api_key:
-            self._last_error = "MINIMAX_API_KEY not found"
-            return None
-
-        self._log(f"Generating image with MiniMax (aspect ratio: {aspect_ratio})")
-
-        payload = {
-            "model": MINIMAX_DEFAULT_MODEL,
-            "prompt": prompt,
-            "aspect_ratio": aspect_ratio,
-            "response_format": "base64",
-        }
-
-        headers = {"Authorization": f"Bearer {api_key}"}
-
-        try:
-            response = requests.post(MINIMAX_API_URL, headers=headers, json=payload, timeout=120)
-
-            if response.status_code != 200:
-                self._last_error = f"API Error ({response.status_code}): {response.text}"
-                self._log(f"✗ {self._last_error}")
-                return None
-
-            result = response.json()
-
-            # MiniMax returns: {"data": {"image_base64": [...]}}
-            if "data" in result and "image_base64" in result["data"]:
-                images = result["data"]["image_base64"]
-                if images:
-                    base64_data = images[0]
-                    if ',' in base64_data:
-                        base64_data = base64_data.split(',', 1)[1]
-                    self._log(f"✓ Generated image ({len(base64_data)} base64 chars)")
-                    return base64.b64decode(base64_data)
-
-            self._last_error = "No image data in MiniMax response"
-            return None
-        except Exception as e:
-            self._last_error = f"MiniMax API error: {str(e)}"
             return None
     
     def review_image(self, image_path: str, original_prompt: str, 
@@ -764,34 +656,9 @@ Generate a publication-quality scientific diagram that meets all the guidelines 
         print(f"Document Type: {doc_type}")
         print(f"Quality Threshold: {threshold}/10")
         print(f"Max Iterations: {iterations}")
-        print(f"Provider: {self.provider}")
         print(f"Output: {output_path}")
         print(f"{'='*60}\n")
-
-        # For MiniMax, skip iterative refinement (one-shot generation)
-        if self.provider == "minimax":
-            print("Generating image with MiniMax (single generation, no iterative refinement)...")
-            image_data = self.generate_image(current_prompt)
-
-            if not image_data:
-                error_msg = getattr(self, '_last_error', 'Image generation failed')
-                print(f"✗ Generation failed: {error_msg}")
-                return {"success": False, "error": error_msg}
-
-            # Save directly to output path
-            with open(output_path, "wb") as f:
-                f.write(image_data)
-            print(f"✓ Final image: {output_path}")
-
-            return {
-                "user_prompt": user_prompt,
-                "doc_type": doc_type,
-                "provider": "minimax",
-                "final_image": str(output_path),
-                "success": True
-            }
-
-        # OpenRouter: Use iterative refinement
+        
         for i in range(1, iterations + 1):
             print(f"\n[Iteration {i}/{iterations}]")
             print("-" * 40)
@@ -886,18 +753,23 @@ Generate a publication-quality scientific diagram that meets all the guidelines 
 def main():
     """Command-line interface."""
     parser = argparse.ArgumentParser(
-        description="Generate scientific schematics using Nano Banana Pro or MiniMax AI",
+        description="Generate scientific schematics using AI with smart iterative refinement",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples (Nano Banana Pro - default):
-  python generate_schematic_ai.py "CONSORT flow diagram" -o flowchart.png
-  python generate_schematic_ai.py "Neural network architecture" -o diagram.png --doc-type journal
+Examples:
+  # Generate a flowchart for a journal paper
+  python generate_schematic_ai.py "CONSORT participant flow diagram" -o flowchart.png --doc-type journal
+  
+  # Generate neural network architecture for presentation (lower threshold)
+  python generate_schematic_ai.py "Transformer encoder-decoder architecture" -o transformer.png --doc-type presentation
+  
+  # Generate with custom max iterations for poster
+  python generate_schematic_ai.py "Biological signaling pathway" -o pathway.png --iterations 2 --doc-type poster
+  
+  # Verbose output
+  python generate_schematic_ai.py "Circuit diagram" -o circuit.png -v
 
-Examples (MiniMax):
-  python generate_schematic_ai.py "CONSORT flow diagram" -o flowchart.png --provider minimax
-  python generate_schematic_ai.py "Neural network architecture" -o diagram.png --provider minimax --aspect-ratio 16:9
-
-Document Types (quality thresholds, Nano Banana Pro only):
+Document Types (quality thresholds):
   journal      8.5/10  - Nature, Science, peer-reviewed journals
   conference   8.0/10  - Conference papers
   thesis       8.0/10  - Dissertations, theses
@@ -908,69 +780,52 @@ Document Types (quality thresholds, Nano Banana Pro only):
   presentation 6.5/10  - Slides, talks
   default      7.5/10  - General purpose
 
-Environment (Nano Banana Pro):
-  OPENROUTER_API_KEY    OpenRouter API key (required)
+Note: Multiple iterations only occur if quality is BELOW the threshold.
+      If the first generation meets the threshold, no extra API calls are made.
 
-Environment (MiniMax):
-  MINIMAX_API_KEY       MiniMax API key
-  IMAGE_PROVIDER        "openrouter" or "minimax"
+Environment:
+  OPENROUTER_API_KEY    OpenRouter API key (required)
         """
     )
-
+    
     parser.add_argument("prompt", help="Description of the diagram to generate")
-    parser.add_argument("-o", "--output", required=True,
+    parser.add_argument("-o", "--output", required=True, 
                        help="Output image path (e.g., diagram.png)")
     parser.add_argument("--iterations", type=int, default=2,
-                       help="Maximum refinement iterations (default: 2, max: 2, Nano Banana Pro only)")
+                       help="Maximum refinement iterations (default: 2, max: 2)")
     parser.add_argument("--doc-type", default="default",
-                       choices=["journal", "conference", "poster", "presentation",
+                       choices=["journal", "conference", "poster", "presentation", 
                                "report", "grant", "thesis", "preprint", "default"],
                        help="Document type for quality threshold (default: default)")
-    parser.add_argument("--provider", choices=["openrouter", "minimax"],
-                       help="Image provider (default: from IMAGE_PROVIDER env or 'openrouter')")
-    parser.add_argument("--aspect-ratio", default="16:9",
-                       help="Image aspect ratio for MiniMax (default: 16:9)")
-    parser.add_argument("--api-key", help="API key for the selected provider")
+    parser.add_argument("--api-key", help="OpenRouter API key (or set OPENROUTER_API_KEY)")
     parser.add_argument("-v", "--verbose", action="store_true",
                        help="Verbose output")
-
+    
     args = parser.parse_args()
-
-    # Get provider from args or environment
-    provider = args.provider or _get_provider()
-
-    # Validate API key
-    if provider == "minimax":
-        api_key = args.api_key or _get_api_key("minimax")
-        if not api_key:
-            print("Error: MINIMAX_API_KEY environment variable not set")
-            print("\nSet it with:")
-            print("  export MINIMAX_API_KEY='your_api_key'")
-            print("\nOr add to .env:")
-            print("  MINIMAX_API_KEY=your_api_key")
-            sys.exit(1)
-    else:
-        api_key = args.api_key or os.getenv("OPENROUTER_API_KEY")
-        if not api_key:
-            print("Error: OPENROUTER_API_KEY environment variable not set")
-            print("\nSet it with:")
-            print("  export OPENROUTER_API_KEY='your_api_key'")
-            sys.exit(1)
-
-    # Validate iterations - enforce max of 2 (OpenRouter only)
+    
+    # Check for API key
+    api_key = args.api_key or os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        print("Error: OPENROUTER_API_KEY environment variable not set")
+        print("\nSet it with:")
+        print("  export OPENROUTER_API_KEY='your_api_key'")
+        print("\nOr provide via --api-key flag")
+        sys.exit(1)
+    
+    # Validate iterations - enforce max of 2
     if args.iterations < 1 or args.iterations > 2:
         print("Error: Iterations must be between 1 and 2")
         sys.exit(1)
-
+    
     try:
-        generator = ScientificSchematicGenerator(api_key=api_key, verbose=args.verbose, provider=provider)
+        generator = ScientificSchematicGenerator(api_key=api_key, verbose=args.verbose)
         results = generator.generate_iterative(
             user_prompt=args.prompt,
             output_path=args.output,
             iterations=args.iterations,
             doc_type=args.doc_type
         )
-
+        
         if results["success"]:
             print(f"\n✓ Success! Image saved to: {args.output}")
             if results.get("early_stop"):

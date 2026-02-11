@@ -8,11 +8,15 @@ scientific-schematics and generate-image skills.
 Default behavior: Generate 5-6 core visuals only
 Use --all flag to generate all 28 extended visuals
 
-Usage (Nano Banana Pro - default):
+Usage:
+    # Generate core 5-6 visuals (recommended for starting a report)
     python generate_market_visuals.py --topic "Electric Vehicle Charging" --output-dir figures/
-
-Usage (MiniMax):
-    python generate_market_visuals.py --topic "Electric Vehicle Charging" --output-dir figures/ --provider minimax
+    
+    # Generate all 28 visuals (for comprehensive coverage)
+    python generate_market_visuals.py --topic "AI in Healthcare" --output-dir figures/ --all
+    
+    # Skip existing files
+    python generate_market_visuals.py --topic "Topic" --output-dir figures/ --skip-existing
 """
 
 import argparse
@@ -20,25 +24,6 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
-
-
-def _get_provider() -> str:
-    """Get image provider from environment or .env file."""
-    provider = os.environ.get("IMAGE_PROVIDER")
-    if provider:
-        return provider.lower()
-
-    for path in [Path.cwd()] + list(Path.cwd().parents)[:5]:
-        env_file = path / ".env"
-        if env_file.exists():
-            with open(env_file, 'r') as f:
-                for line in f:
-                    if line.startswith('IMAGE_PROVIDER='):
-                        value = line.split('=', 1)[1].strip().strip('"').strip("'")
-                        if value:
-                            return value.lower()
-    return "openrouter"
 
 
 # Visual definitions with prompts
@@ -343,28 +328,27 @@ def generate_visual(
     output_dir: Path,
     topic: str,
     skip_existing: bool = False,
-    verbose: bool = False,
-    provider: str = "openrouter"
+    verbose: bool = False
 ) -> bool:
     """Generate a single visual using the appropriate tool."""
     output_path = output_dir / filename
-
+    
     # Skip if exists and skip_existing is True
     if skip_existing and output_path.exists():
         if verbose:
             print(f"  [SKIP] {filename} already exists")
         return True
-
+    
     # Format prompt with topic
     formatted_prompt = prompt.format(topic=topic)
-
+    
     # Get script path
     script_path = get_script_path(tool)
-
+    
     if not script_path.exists():
         print(f"  [ERROR] Script not found: {script_path}")
         return False
-
+    
     # Build command
     if tool == "scientific-schematics":
         cmd = [
@@ -372,16 +356,14 @@ def generate_visual(
             str(script_path),
             formatted_prompt,
             "-o", str(output_path),
-            "--doc-type", "report",
-            "--provider", provider
+            "--doc-type", "report"
         ]
     else:  # generate-image
         cmd = [
             sys.executable,
             str(script_path),
             formatted_prompt,
-            "--output", str(output_path),
-            "--provider", provider
+            "--output", str(output_path)
         ]
     
     if verbose:
@@ -454,17 +436,9 @@ def main():
         type=str,
         help="Only generate visuals matching this pattern (e.g., '01_', 'porter')"
     )
-    parser.add_argument(
-        "--provider",
-        choices=["openrouter", "minimax"],
-        help="Image provider (default: from IMAGE_PROVIDER env or 'openrouter')"
-    )
-
+    
     args = parser.parse_args()
-
-    # Get provider from args or environment
-    provider = args.provider or _get_provider()
-
+    
     # Create output directory
     output_dir = Path(args.output_dir)
     if not args.dry_run:
@@ -475,7 +449,6 @@ def main():
     print(f"{'='*60}")
     print(f"Topic: {args.topic}")
     print(f"Output Directory: {output_dir.absolute()}")
-    print(f"Provider: {provider}")
     print(f"Mode: {'All Visuals (27)' if args.all else 'Core Visuals Only (5-6)'}")
     print(f"Skip Existing: {args.skip_existing}")
     print(f"{'='*60}\n")
@@ -515,7 +488,7 @@ def main():
     
     for i, (filename, tool, prompt) in enumerate(visuals_to_generate, 1):
         print(f"\n[{i}/{total}] Generating {filename}...")
-
+        
         result = generate_visual(
             filename=filename,
             tool=tool,
@@ -523,8 +496,7 @@ def main():
             output_dir=output_dir,
             topic=args.topic,
             skip_existing=args.skip_existing,
-            verbose=args.verbose,
-            provider=provider
+            verbose=args.verbose
         )
         
         if result:

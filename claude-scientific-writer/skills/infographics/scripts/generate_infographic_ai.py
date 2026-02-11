@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
 """
-AI-powered infographic generation using Nano Banana Pro or MiniMax.
+AI-powered infographic generation using Nano Banana Pro.
 
 This script uses a smart iterative refinement approach:
 1. (Optional) Research phase - gather facts and data using Perplexity Sonar
-2. Generate initial infographic with Nano Banana Pro or MiniMax
-3. AI quality review using Gemini 3 Pro for infographic critique (OpenRouter only)
+2. Generate initial infographic with Nano Banana Pro
+3. AI quality review using Gemini 3 Pro for infographic critique
 4. Only regenerate if quality is below threshold for document type
 5. Repeat until quality meets standards (max iterations)
 
 Requirements:
-    - OPENROUTER_API_KEY environment variable (Nano Banana Pro)
-    - MINIMAX_API_KEY environment variable (MiniMax)
+    - OPENROUTER_API_KEY environment variable
     - requests library
 
-Usage (Nano Banana Pro):
+Usage:
     python generate_infographic_ai.py "5 benefits of exercise" -o benefits.png --type list
-
-Usage (MiniMax):
-    python generate_infographic_ai.py "5 benefits of exercise" -o benefits.png --provider minimax
+    python generate_infographic_ai.py "Global AI market size" -o ai_market.png --type statistical --research
+    python generate_infographic_ai.py "Company history 2010-2025" -o timeline.png --type timeline --style corporate
 """
 
 import argparse
@@ -36,48 +34,6 @@ try:
 except ImportError:
     print("Error: requests library not found. Install with: pip install requests")
     sys.exit(1)
-
-
-# MiniMax API configuration
-MINIMAX_API_URL = "https://api.minimaxi.com/v1/image_generation"
-MINIMAX_DEFAULT_MODEL = "image-01"
-
-
-def _get_api_key(provider: str = "openrouter") -> Optional[str]:
-    """Get API key from environment or .env file."""
-    env_key = f"{provider.upper()}_API_KEY"
-    api_key = os.environ.get(env_key)
-    if api_key:
-        return api_key
-
-    for path in [Path.cwd()] + list(Path.cwd().parents)[:5]:
-        env_file = path / ".env"
-        if env_file.exists():
-            with open(env_file, 'r') as f:
-                for line in f:
-                    if line.startswith(f'{env_key}='):
-                        value = line.split('=', 1)[1].strip().strip('"').strip("'")
-                        if value:
-                            return value
-    return None
-
-
-def _get_provider() -> str:
-    """Get image provider from environment or .env file."""
-    provider = os.environ.get("IMAGE_PROVIDER")
-    if provider:
-        return provider.lower()
-
-    for path in [Path.cwd()] + list(Path.cwd().parents)[:5]:
-        env_file = path / ".env"
-        if env_file.exists():
-            with open(env_file, 'r') as f:
-                for line in f:
-                    if line.startswith('IMAGE_PROVIDER='):
-                        value = line.split('=', 1)[1].strip().strip('"').strip("'")
-                        if value:
-                            return value.lower()
-    return "openrouter"
 
 
 def _load_env_file():
@@ -381,49 +337,28 @@ IMPORTANT - NO META CONTENT:
 """
 
     def __init__(self, api_key: Optional[str] = None, verbose: bool = False):
-        """Initialize the generator.
-
-        Args:
-            api_key: API key for the selected provider
-            verbose: Print detailed progress information
-            provider: Image provider ("openrouter" or "minimax")
-        """
-        self.provider = provider.lower()
+        """Initialize the generator."""
+        self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+        
+        if not self.api_key:
+            _load_env_file()
+            self.api_key = os.getenv("OPENROUTER_API_KEY")
+        
+        if not self.api_key:
+            raise ValueError(
+                "OPENROUTER_API_KEY not found. Please either:\n"
+                "  1. Set the OPENROUTER_API_KEY environment variable\n"
+                "  2. Add OPENROUTER_API_KEY to your .env file\n"
+                "  3. Pass api_key parameter to the constructor\n"
+                "Get your API key from: https://openrouter.ai/keys"
+            )
+        
         self.verbose = verbose
         self._last_error = None
         self.base_url = "https://openrouter.ai/api/v1"
-
-        if self.provider == "minimax":
-            self.api_key = api_key or _get_api_key("minimax")
-            if not self.api_key:
-                raise ValueError(
-                    "MINIMAX_API_KEY not found. Please either:\n"
-                    "  1. Set the MINIMAX_API_KEY environment variable\n"
-                    "  2. Add MINIMAX_API_KEY to your .env file\n"
-                    "  3. Pass api_key parameter to the constructor\n"
-                    "Get your API key from: https://api.minimaxi.com"
-                )
-            self.image_model = MINIMAX_DEFAULT_MODEL
-        else:
-            self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
-
-            if not self.api_key:
-                _load_env_file()
-                self.api_key = os.getenv("OPENROUTER_API_KEY")
-
-            if not self.api_key:
-                raise ValueError(
-                    "OPENROUTER_API_KEY not found. Please either:\n"
-                    "  1. Set the OPENROUTER_API_KEY environment variable\n"
-                    "  2. Add OPENROUTER_API_KEY to your .env file\n"
-                    "  3. Pass api_key parameter to the constructor\n"
-                    "Get your API key from: https://openrouter.ai/keys"
-                )
-
-            # Nano Banana Pro for image generation
-            self.image_model = "google/gemini-3-pro-image-preview"
-
-        # Gemini 3 Pro for quality review (OpenRouter only)
+        # Nano Banana Pro for image generation
+        self.image_model = "google/gemini-3-pro-image-preview"
+        # Gemini 3 Pro for quality review
         self.review_model = "google/gemini-3-pro"
         
     def _log(self, message: str):
@@ -799,37 +734,30 @@ Incorporate specific numbers, percentages, and dates from the research."""
         parts.append("\nGenerate a professional, publication-quality infographic that meets all the guidelines above.")
         
         return "\n".join(parts)
-
+    
     def generate_image(self, prompt: str) -> Optional[bytes]:
-        """Generate an image using the configured provider."""
+        """Generate an image using Nano Banana Pro."""
         self._last_error = None
-
-        if self.provider == "minimax":
-            return self._generate_image_minimax(prompt)
-        else:
-            return self._generate_image_openrouter(prompt)
-
-    def _generate_image_openrouter(self, prompt: str) -> Optional[bytes]:
-        """Generate an image using OpenRouter API."""
+        
         messages = [
             {
                 "role": "user",
                 "content": prompt
             }
         ]
-
+        
         try:
             response = self._make_request(
                 model=self.image_model,
                 messages=messages,
                 modalities=["image", "text"]
             )
-
+            
             if self.verbose:
                 self._log(f"Response keys: {response.keys()}")
                 if "error" in response:
                     self._log(f"API Error: {response['error']}")
-
+            
             if "error" in response:
                 error_msg = response["error"]
                 if isinstance(error_msg, dict):
@@ -837,14 +765,14 @@ Incorporate specific numbers, percentages, and dates from the research."""
                 self._last_error = f"API Error: {error_msg}"
                 print(f"✗ {self._last_error}")
                 return None
-
+            
             image_data = self._extract_image_from_response(response)
             if image_data:
                 self._log(f"✓ Generated image ({len(image_data)} bytes)")
             else:
                 self._last_error = "No image data in API response"
                 self._log(f"✗ {self._last_error}")
-
+            
             return image_data
         except RuntimeError as e:
             self._last_error = str(e)
@@ -853,49 +781,6 @@ Incorporate specific numbers, percentages, and dates from the research."""
         except Exception as e:
             self._last_error = f"Unexpected error: {str(e)}"
             self._log(f"✗ Generation failed: {self._last_error}")
-            return None
-
-    def _generate_image_minimax(self, prompt: str, aspect_ratio: str = "16:9") -> Optional[bytes]:
-        """Generate an image using MiniMax API."""
-        api_key = _get_api_key("minimax")
-        if not api_key:
-            self._last_error = "MINIMAX_API_KEY not found"
-            return None
-
-        self._log(f"Generating image with MiniMax (aspect ratio: {aspect_ratio})")
-
-        payload = {
-            "model": MINIMAX_DEFAULT_MODEL,
-            "prompt": prompt,
-            "aspect_ratio": aspect_ratio,
-            "response_format": "base64",
-        }
-
-        headers = {"Authorization": f"Bearer {api_key}"}
-
-        try:
-            response = requests.post(MINIMAX_API_URL, headers=headers, json=payload, timeout=120)
-
-            if response.status_code != 200:
-                self._last_error = f"API Error ({response.status_code}): {response.text}"
-                self._log(f"✗ {self._last_error}")
-                return None
-
-            result = response.json()
-
-            if "data" in result and "image_base64" in result["data"]:
-                images = result["data"]["image_base64"]
-                if images:
-                    base64_data = images[0]
-                    if ',' in base64_data:
-                        base64_data = base64_data.split(',', 1)[1]
-                    self._log(f"✓ Generated image ({len(base64_data)} base64 chars)")
-                    return base64.b64decode(base64_data)
-
-            self._last_error = "No image data in MiniMax response"
-            return None
-        except Exception as e:
-            self._last_error = f"MiniMax API error: {str(e)}"
             return None
     
     def review_image(self, image_path: str, original_prompt: str,
@@ -1150,48 +1035,17 @@ Generate an improved version that:
         }
         
         print(f"\n{'='*60}")
-        print(f"Generating Infographic with {'MiniMax' if self.provider == 'minimax' else 'Nano Banana Pro'}")
+        print(f"Generating Infographic with Nano Banana Pro")
         print(f"{'='*60}")
         print(f"Content: {user_prompt}")
         print(f"Type: {type_name}")
         print(f"Style: {style_name}")
-        print(f"Provider: {self.provider}")
         print(f"Research: {'Enabled' if research else 'Disabled'}")
         print(f"Quality Threshold: {threshold}/10")
         print(f"Max Iterations: {iterations}")
         print(f"Output: {output_path}")
         print(f"{'='*60}\n")
-
-        # For MiniMax, skip iterative refinement (one-shot generation)
-        if self.provider == "minimax":
-            print("Generating infographic with MiniMax (single generation, no iterative refinement)...")
-
-            # Build prompt (skip research for MiniMax)
-            current_prompt = self._build_generation_prompt(
-                user_prompt, infographic_type, style, palette, background
-            )
-
-            image_data = self.generate_image(current_prompt)
-
-            if not image_data:
-                error_msg = getattr(self, '_last_error', 'Generation failed')
-                print(f"✗ Generation failed: {error_msg}")
-                return {"success": False, "error": error_msg}
-
-            # Save directly to output path
-            with open(output_path, "wb") as f:
-                f.write(image_data)
-            print(f"✓ Final image: {output_path}")
-
-            return {
-                "user_prompt": user_prompt,
-                "infographic_type": infographic_type,
-                "style": style,
-                "provider": "minimax",
-                "final_image": str(output_path),
-                "success": True
-            }
-
+        
         # ===== RESEARCH PHASE =====
         enhanced_prompt = user_prompt
         if research:
@@ -1319,16 +1173,24 @@ Generate an improved version that:
 def main():
     """Command-line interface."""
     parser = argparse.ArgumentParser(
-        description="Generate infographics using Nano Banana Pro or MiniMax AI",
+        description="Generate infographics using Nano Banana Pro with smart iterative refinement",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples (Nano Banana Pro - default):
+Examples:
+  # Generate a list infographic
   python generate_infographic_ai.py "5 benefits of meditation" -o benefits.png --type list
+  
+  # Generate a timeline with corporate style
   python generate_infographic_ai.py "Company history 2010-2025" -o timeline.png --type timeline --style corporate
-
-Examples (MiniMax):
-  python generate_infographic_ai.py "5 benefits of meditation" -o benefits.png --provider minimax
-  python generate_infographic_ai.py "Company history" -o timeline.png --provider minimax --aspect-ratio 16:9
+  
+  # Generate with colorblind-safe palette
+  python generate_infographic_ai.py "Heart disease stats" -o stats.png --type statistical --palette wong
+  
+  # Generate with RESEARCH for accurate data (uses Perplexity Sonar)
+  python generate_infographic_ai.py "Global AI market 2025" -o ai_market.png --type statistical --research
+  
+  # Verbose output
+  python generate_infographic_ai.py "Process diagram" -o process.png --type process -v
 
 Infographic Types:
   statistical   - Data-driven with charts and numbers
@@ -1348,7 +1210,7 @@ Style Presets:
 Colorblind-Safe Palettes:
   wong, ibm, tol
 
-Document Types (quality thresholds, Nano Banana Pro only):
+Document Types (quality thresholds):
   marketing     8.5/10  - Marketing materials
   report        8.0/10  - Business reports
   presentation  7.5/10  - Slides/talks
@@ -1357,17 +1219,13 @@ Document Types (quality thresholds, Nano Banana Pro only):
   draft         6.5/10  - Working drafts
   default       7.5/10  - General purpose
 
-Environment (Nano Banana Pro):
+Environment:
   OPENROUTER_API_KEY    OpenRouter API key (required)
-
-Environment (MiniMax):
-  MINIMAX_API_KEY       MiniMax API key
-  IMAGE_PROVIDER        "openrouter" or "minimax"
         """
     )
-
+    
     parser.add_argument("prompt", help="Description of the infographic content")
-    parser.add_argument("-o", "--output", required=True,
+    parser.add_argument("-o", "--output", required=True, 
                        help="Output image path (e.g., infographic.png)")
     parser.add_argument("--type", "-t", choices=list(INFOGRAPHIC_TYPES.keys()),
                        help="Infographic type preset")
@@ -1378,44 +1236,30 @@ Environment (MiniMax):
     parser.add_argument("--background", "-b", default="white",
                        help="Background color (default: white)")
     parser.add_argument("--iterations", type=int, default=3,
-                       help="Maximum refinement iterations (default: 3, Nano Banana Pro only)")
+                       help="Maximum refinement iterations (default: 3)")
     parser.add_argument("--doc-type", default="default",
-                       choices=["marketing", "report", "presentation", "social",
+                       choices=["marketing", "report", "presentation", "social", 
                                "internal", "draft", "default"],
                        help="Document type for quality threshold (default: default)")
-    parser.add_argument("--provider", choices=["openrouter", "minimax"],
-                       help="Image provider (default: from IMAGE_PROVIDER env or 'openrouter')")
-    parser.add_argument("--aspect-ratio", default="16:9",
-                       help="Image aspect ratio for MiniMax (default: 16:9)")
-    parser.add_argument("--api-key", help="API key for the selected provider")
+    parser.add_argument("--api-key", help="OpenRouter API key (or set OPENROUTER_API_KEY)")
     parser.add_argument("-v", "--verbose", action="store_true",
                        help="Verbose output")
     parser.add_argument("--research", "-r", action="store_true",
                        help="Research the topic first using Perplexity Sonar for accurate data")
-
+    
     args = parser.parse_args()
-
-    # Get provider from args or environment
-    provider = args.provider or _get_provider()
-
-    # Validate API key
-    if provider == "minimax":
-        api_key = args.api_key or _get_api_key("minimax")
-        if not api_key:
-            print("Error: MINIMAX_API_KEY environment variable not set")
-            print("\nSet it with:")
-            print("  export MINIMAX_API_KEY='your_api_key'")
-            sys.exit(1)
-    else:
-        api_key = args.api_key or os.getenv("OPENROUTER_API_KEY")
-        if not api_key:
-            print("Error: OPENROUTER_API_KEY environment variable not set")
-            print("\nSet it with:")
-            print("  export OPENROUTER_API_KEY='your_api_key'")
-            sys.exit(1)
-
+    
+    # Check for API key
+    api_key = args.api_key or os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        print("Error: OPENROUTER_API_KEY environment variable not set")
+        print("\nSet it with:")
+        print("  export OPENROUTER_API_KEY='your_api_key'")
+        print("\nOr provide via --api-key flag")
+        sys.exit(1)
+    
     try:
-        generator = InfographicGenerator(api_key=api_key, verbose=args.verbose, provider=provider)
+        generator = InfographicGenerator(api_key=api_key, verbose=args.verbose)
         results = generator.generate_iterative(
             user_prompt=args.prompt,
             output_path=args.output,

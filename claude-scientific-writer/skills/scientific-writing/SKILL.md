@@ -1,6 +1,6 @@
 ---
 name: scientific-writing
-description: Core skill for the deep research and writing tool. Write scientific manuscripts in full paragraphs (never bullet points). Use two-stage process with (1) section outlines with key points using lookup then (2) convert to flowing prose. IMRAD structure, citations (APA/AMA/Vancouver), figures/tables, reporting guidelines (CONSORT/STROBE/PRISMA), for research papers and journal submissions.
+description: Core skill for the deep research and writing tool. Write scientific manuscripts in full paragraphs (never bullet points). Use two-stage process with (1) section outlines with key points using research-lookup then (2) convert to flowing prose. IMRAD structure, citations (APA/AMA/Vancouver), figures/tables, reporting guidelines (CONSORT/STROBE/PRISMA), for research papers and journal submissions.
 allowed-tools: [Read, Write, Edit, Bash]
 license: MIT license
 metadata:
@@ -11,11 +11,11 @@ metadata:
 
 ## Overview
 
-**This is the core skill for the deep research and writing tool**—combining AI-driven deep research with well-formatted written outputs. Every document produced is backed by comprehensive literature search and verified citations through the lookup skill.
+**This is the core skill for the deep research and writing tool**—combining AI-driven deep research with well-formatted written outputs. Every document produced is backed by comprehensive literature search and verified citations through the research-lookup skill.
 
 Scientific writing is a process for communicating research with precision and clarity. Write manuscripts using IMRAD structure, citations (APA/AMA/Vancouver), figures/tables, and reporting guidelines (CONSORT/STROBE/PRISMA). Apply this skill for research papers and journal submissions.
 
-**Critical Principle: Always write in full paragraphs with flowing prose. Never submit bullet points in the final manuscript.** Use a two-stage process: first create section outlines with key points using lookup, then convert those outlines into complete paragraphs.
+**Critical Principle: Always write in full paragraphs with flowing prose. Never submit bullet points in the final manuscript.** Use a two-stage process: first create section outlines with key points using research-lookup, then convert those outlines into complete paragraphs.
 
 ## When to Use This Skill
 
@@ -48,11 +48,10 @@ This is not optional. Scientific papers without visual elements are incomplete. 
 - Is suitable for journal table of contents display
 - Uses landscape orientation (typically 1200x600px)
 
-**Generate the graphical abstract:**
+**Generate the graphical abstract FIRST:**
 ```bash
-uv run --script skills/scientific-schematics/scripts/generate_schematic_ai.py "Graphical abstract for [paper title]: [brief description]" -o figures/graphical_abstract.png
+python scripts/generate_schematic.py "Graphical abstract for [paper title]: [brief description showing workflow from input → methods → key findings → conclusions]" -o figures/graphical_abstract.png
 ```
-*Dependencies are declared in the script header (PEP 723) - uv automatically installs them.*
 
 **Graphical Abstract Requirements:**
 - **Content**: Visual summary showing workflow, key methods, main findings, and conclusions
@@ -81,7 +80,7 @@ Every document should be richly illustrated. Generate figures liberally - when i
 
 **Use scientific-schematics EXTENSIVELY for technical diagrams:**
 ```bash
-uv run --script skills/scientific-schematics/scripts/generate_schematic_ai.py "your diagram description" -o figures/output.png
+python scripts/generate_schematic.py "your diagram description" -o figures/output.png
 ```
 
 - Study design and methodology flowcharts (CONSORT, PRISMA, STROBE)
@@ -97,7 +96,7 @@ uv run --script skills/scientific-schematics/scripts/generate_schematic_ai.py "y
 
 **Use generate-image EXTENSIVELY for visual content:**
 ```bash
-uv run --script skills/generate-image/scripts/generate_image.py "your image description" -o figures/output.png --provider openrouter
+python scripts/generate_image.py "your image description" -o figures/output.png
 ```
 
 - Photorealistic illustrations of concepts
@@ -272,7 +271,7 @@ Scientific papers must be written in complete, flowing prose. Use this two-stage
 **Stage 1: Create Section Outlines with Key Points**
 
 When starting a new section:
-1. Use the lookup skill to gather relevant literature and data
+1. Use the research-lookup skill to gather relevant literature and data
 2. Create a structured outline with bullet points marking:
    - Main arguments or findings to present
    - Key studies to cite
@@ -357,10 +356,10 @@ Lists may appear in scientific papers only in specific contexts:
 - ✅ **ALWAYS** write as flowing paragraph(s) with natural transitions
 - Exception: Only use structured format if journal explicitly requires it in author guidelines
 
-**Integration with Lookup:**
+**Integration with Research Lookup:**
 
-The lookup skill is essential for Stage 1 (creating outlines):
-1. Search for relevant papers using lookup
+The research-lookup skill is essential for Stage 1 (creating outlines):
+1. Search for relevant papers using research-lookup
 2. Extract key findings, methods, and data
 3. Organize findings as bullet points in your outline
 4. Then convert the outline to full paragraphs in Stage 2
@@ -617,7 +616,7 @@ Adapt language, terminology, and conventions to match the specific scientific di
 **Stage 2: Drafting** (Use two-stage writing process for each section)
 1. Start with figures and tables (the core data story)
 2. For each section below, follow the two-stage process:
-   - **First**: Create outline with bullet points using lookup
+   - **First**: Create outline with bullet points using research-lookup
    - **Second**: Convert bullet points to full paragraphs with flowing prose
 3. Write Methods (often easiest to draft first)
 4. Draft Results (describing figures/tables objectively)
