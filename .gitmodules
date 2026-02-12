@@ -1,0 +1,3 @@
+[submodule "semi-research-writing-prompts"]
+	path = semi-research-writing-prompts
+	url = git@github.com:hyperbolic-c/semi-research-writing-prompts.git
