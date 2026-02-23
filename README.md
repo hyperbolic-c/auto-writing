@@ -31,6 +31,27 @@ auto-writing/
 
 ## Plugins
 
+### Claude Scientific Writer
+
+Deep research and writing tool with AI-driven research and well-formatted outputs. Generate publication-ready scientific papers, reports, posters, grant proposals, literature reviews, and more—all backed by real-time literature search and verified citations.
+
+**Install:**
+```bash
+/plugin marketplace add https://github.com/K-Dense-AI/claude-scientific-writer
+/plugin install claude-scientific-writer
+```
+
+**Initialize:**
+```bash
+/scientific-writer:init
+```
+
+**Requirements:**
+- ANTHROPIC_API_KEY (required)
+- OPENROUTER_API_KEY (optional, for research lookup)
+
+**Available Skills:** 20+ including scientific-schematics, research-lookup, peer-review, citation-management, clinical-reports, research-grants, latex-posters, scientific-slides, and more.
+
 ### Auto-Academic-Writing
 
 Self-contained academic writing assistant with Zotero integration.
