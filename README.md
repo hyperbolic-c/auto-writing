@@ -54,25 +54,4 @@ Deep research and writing tool with AI-driven research and well-formatted output
 
 ## License
 
-Self-contained academic writing assistant with Zotero integration.
-
-**Commands:**
-- `/academic-write <path>` - Start academic writing workflow
-- `/academic-writing-setup` - Configure MCP Provider
-
-**Install:**
-```bash
-# Register the marketplace
-/plugin marketplace add hyperbolic-c/auto-writing
-
-# Install the academic-writing plugin from this marketplace
-/plugin install academic-writing@hyperbolic-c/auto-writing
-```
-
-**Requirements:**
-- [zotero-mcp](https://github.com/54yyyu/zotero-mcp) (Python) - Reference management and PDF retrieval
-- [cookjohn-zotero-mcp](https://github.com/cookjohn/zotero-mcp) (TypeScript) - Zotero plugin alternative
-
-## License
-
 MIT
