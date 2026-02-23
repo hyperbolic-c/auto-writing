@@ -47,8 +47,7 @@ Deep research and writing tool with AI-driven research and well-formatted output
 ```
 
 **Requirements:**
-- ANTHROPIC_API_KEY (required)
-- OPENROUTER_API_KEY (optional, for research lookup)
+- [zotero-mcp](/zotero-mcp/) - Reference management and PDF retrieval
 
 **Available Skills:** 20+ including scientific-schematics, research-lookup, peer-review, citation-management, clinical-reports, research-grants, latex-posters, scientific-slides, and more.
 
