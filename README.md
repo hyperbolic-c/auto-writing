@@ -37,8 +37,8 @@ Deep research and writing tool with AI-driven research and well-formatted output
 
 **Install:**
 ```bash
-/plugin marketplace add https://github.com/K-Dense-AI/claude-scientific-writer
-/plugin install claude-scientific-writer
+/plugin marketplace add hyperbolic-c/auto-writing
+/plugin install claude-scientific-writer@hyperbolic-c/auto-writing
 ```
 
 **Initialize:**
