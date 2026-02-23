@@ -33,17 +33,12 @@ auto-writing/
 
 ### Claude Scientific Writer
 
-Deep research and writing tool with AI-driven research and well-formatted outputs. Generate publication-ready scientific papers, reports, posters, grant proposals, literature reviews, and more—all backed by real-time literature search and verified citations.
+Deep research and writing tool with AI-driven research and well-formatted outputs. Generate publication-ready scientific papers, reports, posters, grant proposals, literature reviews, and more. The **scientific-writing skills** leverage **zotero-mcp** for intelligent literature search, reference management, and PDF retrieval from your Zotero library.
 
 **Install:**
 ```bash
 /plugin marketplace add hyperbolic-c/auto-writing
 /plugin install claude-scientific-writer@hyperbolic-c/auto-writing
-```
-
-**Initialize:**
-```bash
-/scientific-writer:init
 ```
 
 **Requirements:**
