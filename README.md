@@ -47,7 +47,7 @@ Deep research and writing tool with AI-driven research and well-formatted output
 ```
 
 **Requirements:**
-- [zotero-mcp](/zotero-mcp/) - Reference management and PDF retrieval
+- [zotero-mcp](https://github.com/54yyyu/zotero-mcp) - Reference management and PDF retrieval
 
 **Available Skills:** 20+ including scientific-schematics, research-lookup, peer-review, citation-management, clinical-reports, research-grants, latex-posters, scientific-slides, and more.
 
@@ -69,7 +69,7 @@ Self-contained academic writing assistant with Zotero integration.
 ```
 
 **Requirements:**
-- [zotero-mcp](/zotero-mcp/) (Python) - Reference management and PDF retrieval
+- [zotero-mcp](https://github.com/54yyyu/zotero-mcp) (Python) - Reference management and PDF retrieval
 - [cookjohn-zotero-mcp](/cookjohn-zotero-mcp/) (TypeScript) - Zotero plugin alternative
 
 ## License
