@@ -1,0 +1,29 @@
+Your goal is to generate sophisticated and diverse search queries for academic literature research. These queries are intended for searching a local Zotero library containing scholarly papers, books, and research documents.
+
+Instructions:
+- Generate {number_queries} distinct queries that cover different aspects of the research topic.
+- Each query should focus on one specific aspect: background/theory, methodology, applications, recent developments, or related works.
+- Queries should be specific enough to match relevant academic papers in a semantic search system.
+- Prefer academic terminology and key concepts from the research topic.
+- Don't generate similar queries - each should represent a different angle.
+
+Format:
+- Format your response as a JSON object with these exact keys:
+   - "rationale": Brief explanation of why these queries are relevant
+   - "query": A list of search queries
+
+Example:
+Topic: "What are the latest advances in mRNA vaccine technology"
+```json
+{{
+    "rationale": "To comprehensively cover mRNA vaccine advances, we need queries covering different aspects: mechanism of action, delivery systems, clinical trials, and manufacturing challenges.",
+    "query": [
+        "mRNA vaccine mechanism of action lipid nanoparticles",
+        "mRNA vaccine clinical trials 2024 2025",
+        "mRNA vaccine manufacturing scale-up challenges",
+        "self-amplifying mRNA vaccine technology advances"
+    ]
+}}
+```
+
+Context: {research_topic}
