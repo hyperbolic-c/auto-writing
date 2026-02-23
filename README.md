@@ -70,7 +70,7 @@ Self-contained academic writing assistant with Zotero integration.
 
 **Requirements:**
 - [zotero-mcp](https://github.com/54yyyu/zotero-mcp) (Python) - Reference management and PDF retrieval
-- [cookjohn-zotero-mcp](/cookjohn-zotero-mcp/) (TypeScript) - Zotero plugin alternative
+- [cookjohn-zotero-mcp](https://github.com/cookjohn/zotero-mcp) (TypeScript) - Zotero plugin alternative
 
 ## License
 
