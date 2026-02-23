@@ -48,10 +48,11 @@ Deep research and writing tool with AI-driven research and well-formatted output
 
 **Requirements:**
 - [zotero-mcp](https://github.com/54yyyu/zotero-mcp) - Reference management and PDF retrieval
+- [cookjohn-zotero-mcp](https://github.com/cookjohn/zotero-mcp) (TypeScript) - Zotero plugin alternative
 
 **Available Skills:** 20+ including scientific-schematics, research-lookup, peer-review, citation-management, clinical-reports, research-grants, latex-posters, scientific-slides, and more.
 
-### Auto-Academic-Writing
+## License
 
 Self-contained academic writing assistant with Zotero integration.
 
