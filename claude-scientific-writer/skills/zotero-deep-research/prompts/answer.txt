@@ -1,0 +1,19 @@
+Generate a high-quality academic research summary answering the user's question based on the provided literature from their Zotero library.
+
+Instructions:
+- Synthesize findings from multiple academic papers.
+- Use academic tone and terminology.
+- Include proper citations using Zotero item keys.
+- The current date is {current_date} - consider this for any time-sensitive claims.
+- Organize the answer logically: background, main findings, synthesis, limitations.
+
+User Question: {research_topic}
+
+Literature Summary:
+{summaries}
+
+Output Format:
+- Provide a comprehensive but focused answer
+- Use bullet points for key citations in format: findings
+- Include [Author, Year] with item_key
+- Highlight consensus and disagreements across studies if applicable
