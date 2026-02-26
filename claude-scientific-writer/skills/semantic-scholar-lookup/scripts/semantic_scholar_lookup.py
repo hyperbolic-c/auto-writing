@@ -471,7 +471,10 @@ def run_lookup(
     hydrated: List[Dict[str, Any]] = []
     if top_ids:
         batch = client.batch_papers(top_ids, fields=DEFAULT_FIELDS)
-        if not batch.get("error"):
+        # batch API returns list directly, not {"data": [...]}
+        if isinstance(batch, list):
+            hydrated = batch
+        elif isinstance(batch, dict) and not batch.get("error"):
             hydrated = batch.get("data", [])
 
     merged = hydrated if hydrated else candidates
@@ -480,9 +483,15 @@ def run_lookup(
         seed_ids = [p.get("paperId") for p in merged[:seed_count] if p.get("paperId")]
         for seed in seed_ids:
             rec = client.recommendations_for_paper(seed, limit=8, fields=DEFAULT_FIELDS)
-            if rec.get("error"):
-                continue
-            rec_data = rec.get("recommendedPapers") or rec.get("data") or []
+            # Handle both dict and list responses
+            if isinstance(rec, list):
+                rec_data = rec
+            elif isinstance(rec, dict):
+                if rec.get("error"):
+                    continue
+                rec_data = rec.get("recommendedPapers") or rec.get("data") or []
+            else:
+                rec_data = []
             merged.extend(rec_data)
 
     deduped = builder.dedupe(merged)

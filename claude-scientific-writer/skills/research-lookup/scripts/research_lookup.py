@@ -5,12 +5,31 @@ Uses Perplexity's Sonar Pro Search model through OpenRouter for academic researc
 """
 
 import os
+import sys
 import json
-import requests
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional, Any
 from urllib.parse import quote
+
+
+def _load_dotenv() -> None:
+    """Load .env file from current directory or parent directories."""
+    current_dir = Path.cwd()
+    for parent in list(current_dir.parents)[:5]:
+        env_file = parent / ".env"
+        if env_file.exists():
+            with open(env_file, encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        key, _, value = line.partition("=")
+                        key = key.strip()
+                        value = value.strip().strip('"').strip("'")
+                        if key and key not in os.environ:
+                            os.environ[key] = value
+            break
 
 
 class ResearchLookup:
@@ -350,6 +369,9 @@ Focus exclusively on scholarly sources: peer-reviewed journals, academic papers,
 
 
 def main():
+    # Load .env before importing requests
+    _load_dotenv()
+    import requests
     """Command-line interface for testing the research lookup tool."""
     import argparse
     import sys

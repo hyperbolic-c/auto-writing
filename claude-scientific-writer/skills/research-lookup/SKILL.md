@@ -244,6 +244,24 @@ python research_lookup.py "your query" --json -o results.json
 
 ## Technical Integration
 
+### API Key Setup
+
+This script requires an OpenRouter API key. Before running, the script automatically checks for a `.env` file in the current directory or parent directories.
+
+1. Look for a `.env` file with `OPENROUTER_API_KEY=<key>`
+2. Or set the environment variable: `export OPENROUTER_API_KEY=your-api-key-here`
+3. Get a free API key from: https://openrouter.ai/keys
+
+**Dependencies**: This script requires the `requests` library. If running with `python3` directly, install it first:
+```bash
+pip install requests
+```
+
+Or use `uv run` (will auto-install dependencies from plugin's pyproject.toml):
+```bash
+uv run python scripts/research_lookup.py "your query"
+```
+
 ### OpenRouter API Configuration
 
 This skill integrates with OpenRouter (openrouter.ai) to access Perplexity's Sonar models:
