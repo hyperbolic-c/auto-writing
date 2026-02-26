@@ -15,8 +15,14 @@ from urllib.parse import quote
 
 
 def _load_dotenv() -> None:
-    """Load .env file from current directory or parent directories."""
-    current_dir = Path.cwd()
+    """Load .env file from Claude Code's working directory or parent directories."""
+    # Try PWD environment variable first (set by Claude Code shell)
+    pwd = os.environ.get("PWD")
+    if pwd and os.path.isdir(pwd):
+        current_dir = Path(pwd).resolve()
+    else:
+        current_dir = Path.cwd()
+
     for parent in list(current_dir.parents)[:5]:
         env_file = parent / ".env"
         if env_file.exists():

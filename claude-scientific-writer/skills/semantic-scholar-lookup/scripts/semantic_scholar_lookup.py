@@ -519,8 +519,15 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _load_dotenv() -> None:
-    """Load .env file from current directory or parent directories."""
-    directory = os.path.abspath(".")
+    """Load .env file from Claude Code's working directory or parent directories."""
+    # Try PWD environment variable first (set by Claude Code shell)
+    pwd = os.environ.get("PWD")
+    if pwd and os.path.isdir(pwd):
+        directory = os.path.abspath(pwd)
+    else:
+        # Fallback to current directory
+        directory = os.path.abspath(".")
+
     for _ in range(5):
         env_path = os.path.join(directory, ".env")
         if os.path.isfile(env_path):
