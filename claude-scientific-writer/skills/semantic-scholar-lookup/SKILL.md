@@ -40,12 +40,14 @@ If input is a natural-language argument or claim, extract 3–5 focused English 
 
 ### Step 2: Search papers
 
-```bash
-# Use python3 (macOS/Linux default)
-python3 scripts/semantic_scholar_lookup.py "<query>" --year-from <YYYY>
+**Important**: Run from your project directory (where `.env` is located), not from the skill directory:
 
-# Or use uv to run in isolated environment
-uv run python scripts/semantic_scholar_lookup.py "<query>" --year-from <YYYY>
+```bash
+# Use python3 with absolute path (run from your project dir)
+python3 ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/semantic-scholar-lookup/scripts/semantic_scholar_lookup.py "<query>" --year-from <YYYY>
+
+# Or use uv (will auto-find .env in current directory)
+uv run python ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/semantic-scholar-lookup/scripts/semantic_scholar_lookup.py "<query>" --year-from <YYYY>
 ```
 
 Default returns top 12 papers ranked by relevance + recency + citation impact + venue quality.
@@ -117,21 +119,23 @@ Rules:
 
 ## Script Reference
 
+**Important**: Run these commands from your project directory (where `.env` is located):
+
 ```bash
 # Basic search with year range (use python3 on macOS/Linux)
-python3 scripts/semantic_scholar_lookup.py "QUERY" --year-from 2019 --year-to 2026
+python3 ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/semantic-scholar-lookup/scripts/semantic_scholar_lookup.py "QUERY" --year-from 2019 --year-to 2026
 
 # JSON output to file
-python3 scripts/semantic_scholar_lookup.py "QUERY" --json -o evidence.json
+python3 ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/semantic-scholar-lookup/scripts/semantic_scholar_lookup.py "QUERY" --json -o evidence.json
 
 # Fast mode, no recommendation expansion
-python3 scripts/semantic_scholar_lookup.py "QUERY" --no-recommendations --limit 10
+python3 ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/semantic-scholar-lookup/scripts/semantic_scholar_lookup.py "QUERY" --no-recommendations --limit 10
 
 # Using uv (recommended for isolated environment)
-uv run python scripts/semantic_scholar_lookup.py "QUERY" --year-from 2020
+uv run python ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/semantic-scholar-lookup/scripts/semantic_scholar_lookup.py "QUERY" --year-from 2020
 ```
 
-Run `python scripts/semantic_scholar_lookup.py --help` for all flags.
+Run `python3 ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/semantic-scholar-lookup/scripts/semantic_scholar_lookup.py --help` for all flags.
 
 ## Failure Handling
 

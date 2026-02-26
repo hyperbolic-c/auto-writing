@@ -257,9 +257,11 @@ This script requires an OpenRouter API key. Before running, the script automatic
 pip install requests
 ```
 
-Or use `uv run` (will auto-install dependencies from plugin's pyproject.toml):
+**Important**: Run from your project directory (where `.env` is located):
+
 ```bash
-uv run python scripts/research_lookup.py "your query"
+# Using uv (will auto-find .env in current directory)
+uv run python ~/.claude/plugins/cache/auto-writing/claude-scientific-writer/3.2.0/skills/research-lookup/scripts/research_lookup.py "your query"
 ```
 
 ### OpenRouter API Configuration
