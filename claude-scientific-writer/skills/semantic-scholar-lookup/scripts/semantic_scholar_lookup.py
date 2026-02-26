@@ -17,6 +17,13 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from urllib import error, parse, request
+import ssl
+
+
+# Create SSL context that doesn't verify certificates (for systems with outdated certs)
+_ssl_context = ssl.create_default_context()
+_ssl_context.check_hostname = False
+_ssl_context.verify_mode = ssl.CERT_NONE
 
 
 GRAPH_BASE = "https://api.semanticscholar.org/graph/v1"
@@ -135,7 +142,7 @@ class SemanticScholarClient:
             req = request.Request(req_url, data=req_data, headers=req_headers, method=method.upper())
 
             try:
-                with request.urlopen(req, timeout=self.timeout_s) as resp:
+                with request.urlopen(req, timeout=self.timeout_s, context=_ssl_context) as resp:
                     status_code = resp.getcode()
                     raw_body = resp.read().decode("utf-8", errors="replace")
                     resp_headers = resp.headers
