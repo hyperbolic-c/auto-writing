@@ -502,9 +502,41 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _load_dotenv() -> None:
+    """Load .env file from current directory or parent directories."""
+    directory = os.path.abspath(".")
+    for _ in range(5):
+        env_path = os.path.join(directory, ".env")
+        if os.path.isfile(env_path):
+            with open(env_path, encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        key, _, value = line.partition("=")
+                        key = key.strip()
+                        value = value.strip().strip('"').strip("'")
+                        if key and key not in os.environ:
+                            os.environ[key] = value
+            break
+        parent = os.path.dirname(directory)
+        if parent == directory:
+            break
+        directory = parent
+
+
 def main() -> int:
     args = build_parser().parse_args()
+    _load_dotenv()
     api_key = os.getenv("SEMANTIC_SCHOLAR_API_KEY")
+    if not api_key:
+        print(
+            "Warning: SEMANTIC_SCHOLAR_API_KEY not set. Running in anonymous mode "
+            "(stricter rate limits apply).\n"
+            "To configure: create a .env file with SEMANTIC_SCHOLAR_API_KEY=your-key\n"
+            "or run: export SEMANTIC_SCHOLAR_API_KEY=your-key\n"
+            "Get a free key at: https://www.semanticscholar.org/product/api#api-key-form\n",
+            file=sys.stderr,
+        )
 
     result = run_lookup(
         args.query,

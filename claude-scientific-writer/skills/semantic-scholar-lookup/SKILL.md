@@ -2,6 +2,7 @@
 name: semantic-scholar-lookup
 description: Use when user needs to find papers from the open web (not local Zotero library) to support a writing argument, fill a citation gap, or discover literature in a field. Triggers include: "find papers on X", "I need references for this claim", "what's been published about Y", Zotero returns empty results, or topic is outside local library.
 allowed-tools: [Bash]
+compatibility: Semantic Scholar API key optional (recommended for stable throughput)
 ---
 
 # Semantic Scholar Lookup
@@ -18,9 +19,18 @@ Search the open Semantic Scholar corpus and return citation-ready evidence packs
 
 **Do NOT use** when the user wants citations from their own curated library — use `zotero-research-lookup` instead.
 
-## Required Environment
+## API Key Setup
 
-Set `SEMANTIC_SCHOLAR_API_KEY` in environment for stable 1 req/s throughput. Without it the API still works but may hit stricter anonymous limits.
+The script works anonymously but an API key gives stable 1 req/s throughput. Before running, check if the user has configured their API key:
+
+1. Look for a `.env` file in the project directory or parent directories
+2. Check for `SEMANTIC_SCHOLAR_API_KEY=<key>` in the `.env` file
+3. If not found, inform the user they can:
+   - Create a `.env` file with `SEMANTIC_SCHOLAR_API_KEY=your-api-key-here`
+   - Or set the environment variable: `export SEMANTIC_SCHOLAR_API_KEY=your-api-key-here`
+   - Get a free API key from: https://www.semanticscholar.org/product/api#api-key-form
+
+The script automatically detects the `.env` file and warns if the key is missing (anonymous mode proceeds with rate limits).
 
 ## Deterministic Workflow
 
@@ -121,7 +131,7 @@ Run `python scripts/semantic_scholar_lookup.py --help` for all flags.
 - Search returns empty: rephrase query with broader or different keywords, try 1–2 variants
 - All results non-traceable: add `--non-strict-traceability` and flag in output
 - 429 exhausted after retries: report rate limit hit, suggest retry in 60s
-- No API key set: script proceeds anonymously; warn user to set `SEMANTIC_SCHOLAR_API_KEY`
+- No API key set: script proceeds anonymously and warns on stderr; direct user to **API Key Setup** section above
 
 ## References
 
